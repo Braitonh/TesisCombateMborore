@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build:
@@ -18,21 +16,21 @@ services:
       - app-network
           
   mysql:
-    image: mysql
+    image: mysql:8.0   # Cambia a MySQL 8.0 para evitar problemas de compatibilidad
     restart: always
     container_name: mysql-app
     ports:
-      - 3306:3306
+      - 3307:3306
     environment:
         MYSQL_ROOT_PASSWORD: root
         MYSQL_DATABASE: refactorian
         MYSQL_USER: refactorian
         MYSQL_PASSWORD: refactorian
+        MYSQL_ROOT_HOST: '%'
     volumes:
       - dbdata:/var/lib/mysql
     networks:
       - app-network
-
 
 networks:
   app-network:
