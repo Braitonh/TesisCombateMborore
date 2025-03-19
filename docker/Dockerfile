@@ -47,7 +47,7 @@ RUN chmod -R 777 ./storage/
 
 RUN php artisan key:generate
 
-USER www-data
+USER www-data 
 
 # Expose port 80 for Apache.
 EXPOSE 80
