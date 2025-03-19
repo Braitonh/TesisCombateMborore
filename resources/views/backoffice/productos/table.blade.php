@@ -18,7 +18,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ number_format($producto->precio, 2) }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $producto->stock }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <div class="flex items-center space-x-3">
+                            <div class="flex items-center justify-center space-x-3">
                                 {{-- Toggle Switch --}}
                                 @livewire('toggle-switch', ['producto' => $producto])
 
@@ -44,8 +44,7 @@
             </tbody>
         </table>
     </div>
-
-
+   
 @else
     <div class="bg-white rounded-lg shadow p-6 text-center">
         <p class="text-gray-500">No hay productos disponibles</p>

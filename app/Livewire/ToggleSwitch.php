@@ -20,14 +20,15 @@ class ToggleSwitch extends Component
 
     public function toggle()
     {
+        sleep(1);
         $this->activo = !$this->activo;
         $this->producto->update(['activo' => $this->activo]);
         session()->flash('message', 'Estado del producto actualizado correctamente.');
         $this->dispatch('refreshComponent');
         return redirect()->to(url('productos'));
 
-
     }
+
 
     public function render()
     {
