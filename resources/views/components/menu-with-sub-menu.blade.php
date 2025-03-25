@@ -1,7 +1,12 @@
 <li class="rounded-md group hover:bg-gray-200 mt-2">
     <div class="relative">
+
+      @php
+        $shouldExpand = collect($subMenus)->pluck('route')->contains(fn($r) => Route::is($r));
+      @endphp
+
       <!-- Checkbox oculto que controla el estado del collapse -->
-      <input type="checkbox" id="accordion-collapse{{ $id }}" class="hidden peer">
+      <input type="checkbox" id="accordion-collapse{{ $id }}" class="hidden peer" {{ $shouldExpand ? 'checked' : '' }}>
   
       <!-- Label que actúa como botón para expandir/colapsar -->
       <label for="accordion-collapse{{ $id }}" 
@@ -18,8 +23,10 @@
       <!-- Contenedor de los submenús -->
       <div class="pl-5 space-y-2 hidden peer-checked:block peer-checked:bg-gray-200 rounded-b-md">
         @foreach ($subMenus as $subMenu)
-          <a id="{{ $subMenu['id'] }}" href="{{ route($subMenu['route']) }}" 
-            class="block p-2 text-gray-700 transition-all rounded-md">
+          <a id="{{ $subMenu['id'] }}" 
+            href="{{ route($subMenu['route']) }}"
+            class="block p-2 transition-all rounded-md
+                    {{ request()->routeIs($subMenu['route']) ? 'font-semibold text-gray-800' : 'text-gray-700' }}">
             {{ $subMenu['name'] }}
           </a>
         @endforeach

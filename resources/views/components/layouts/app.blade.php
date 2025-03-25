@@ -1,21 +1,20 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+            }
+        </style>
 
-    @livewireStyles
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
-    </style>
-
-</head>
+        <title>{{ $title ?? 'Page Title' }}</title>
+    </head>
 <body class="bg-gray-100">
     <div class="flex h-screen">
         <!-- Sidebar fijo -->
@@ -38,8 +37,8 @@
                         icon="fas fa-home" 
                         name="Productos" 
                         :subMenus="[
-                            ['id' => 'sub1', 'route' => 'welcome', 'name' => 'Lista de Productos'],
-                            ['id' => 'sub2', 'route' => 'welcome', 'name' => 'Perfil', 'role' => 'admin']
+                            ['id' => 'productos', 'route' => 'productos.index', 'name' => 'Lista de Productos'],
+                            ['id' => 'producto-crear', 'route' => 'productos.create', 'name' => 'Crear']
                         ]"
                     />
                 </ul>
@@ -55,19 +54,18 @@
             <nav class="bg-white shadow p-4 flex justify-between items-center">
                 <input type="text" placeholder="Buscar..." class="px-4 py-2 border rounded w-1/3">
                 <div class="flex items-center space-x-4">
-                    <span class="text-gray-600">Thomas Arree</span>
-                    <img src="https://via.placeholder.com/40" class="rounded-full w-10 h-10" alt="User">
+                    <span class="text-gray-600">Brainton hemsouvanh</span>
+                    {{-- <img src="https://via.placeholder.com/40" class="rounded-full w-10 h-10" alt="User"> --}}
                 </div>
             </nav>
 
             <!-- Contenido principal con desplazamiento -->
-            <main class="p-6">
-                @yield('content')
+            <main class="p-4">
+                {{ $slot }}
             </main>
+
         </div>
     </div>
-    @livewireScripts
 
 </body>
-
 </html>

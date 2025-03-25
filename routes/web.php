@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\ProductoController;
+use App\Livewire\Backoffice\Product\ProductComponent;
+use App\Livewire\Backoffice\Product\ProductFormComponent;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,8 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+Route::get('/', function () { return view('welcome');})->name('welcome');
 
-Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
+Route::get('/productos', ProductComponent::class)->name('productos.index');
+Route::get('/productos/create', ProductFormComponent::class)->name('productos.create');
+Route::get('/productos/{productoId}/edit', ProductFormComponent::class)->name('productos.edit');
+
