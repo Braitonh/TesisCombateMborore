@@ -30,4 +30,8 @@ logs:
 		docker-compose logs -f ${DOCKER_PHP_SERVICE}
 
 ssh-be:
-		docker compose exec -it --user ${UID}:${GID} ${DOCKER_PHP_SERVICE} bash
+		docker compose exec -it --user ${UID}:${GID} -e HOME=/var/www ${DOCKER_PHP_SERVICE} bash
+
+root-be:
+		docker compose exec --user root -it ${DOCKER_PHP_SERVICE} bash
+	

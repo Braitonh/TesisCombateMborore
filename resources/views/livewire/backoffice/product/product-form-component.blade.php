@@ -56,3 +56,10 @@
 
     <x-spinner />
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        initMenuItem('#accordion-collapsemenu-productos', '#productos');
+    });
+</script>
+

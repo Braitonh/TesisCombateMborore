@@ -34,11 +34,26 @@
                     />
                     <x-menu-with-sub-menu 
                         id="menu-productos" 
-                        icon="fas fa-home" 
+                        icon="fa-solid fa-burger" 
                         name="Productos" 
                         :subMenus="[
-                            ['id' => 'productos', 'route' => 'productos.index', 'name' => 'Lista de Productos'],
-                            ['id' => 'producto-crear', 'route' => 'productos.create', 'name' => 'Crear']
+                            ['id' => 'productos', 'route' => 'productos.index', 'name' => 'Lista de productos'],
+                        ]"
+                    />
+                    <x-menu-with-sub-menu 
+                    id="menu-pedidos" 
+                    icon="fa-solid fa-cart-shopping"
+                    name="Pedidos" 
+                    :subMenus="[
+                            ['id' => 'pedidos', 'route' => 'productos.index', 'name' => 'Lista de pedidos'],
+                        ]"
+                    />
+                    <x-menu-with-sub-menu 
+                    id="menu-usuarios" 
+                    icon="fa-solid fa-users"
+                    name="Usuarios" 
+                    :subMenus="[
+                            ['id' => 'usuarios', 'route' => 'usuarios.index', 'name' => 'Lista de usuarios'],
                         ]"
                     />
                 </ul>
@@ -69,3 +84,26 @@
 
 </body>
 </html>
+
+<script>
+    window.initMenuItem = function (checkboxSelector, itemSelector) {
+        const checkbox = document.querySelector(checkboxSelector);
+        const item = document.querySelector(itemSelector);
+
+        if (checkbox) {
+            checkbox.checked = true;
+
+            const idSuffix = checkbox.id.replace('accordion-collapse', '');
+            const svg = document.getElementById('svg-' + idSuffix);
+            if (svg) {
+                svg.classList.remove('rotate-180');
+                svg.classList.add('rotate-0');
+            }
+        }
+
+        if (item) {
+            item.classList.add('font-semibold', 'text-gray-800');
+        }
+    };
+</script>
+
