@@ -14,15 +14,31 @@ class ProductComponent extends Component
     public $buscador = '';
     
     protected $queryString = ['buscador'];
+    public $showDeleteModal = false;
+    public $productoIdToDelete = null;
 
 
-    #[On('eliminarProducto')]
-    public function delete($id)
+    public function confirmDelete($id)
     {
-        $producto = Producto::findOrFail($id);
+        $this->productoIdToDelete = $id;
+        $this->showDeleteModal = true;
+    }   
+
+    public function delete()
+    {
+        $producto = Producto::findOrFail($this->productoIdToDelete);
         $producto->delete();
 
+        $this->showDeleteModal = false;
+        $this->productoIdToDelete = null;
+
         session()->flash('success', 'Producto eliminado correctamente.');
+    }
+    
+    public function cancelDelete()
+    {
+        $this->showDeleteModal = false;
+        $this->productoIdToDelete = null;
     }
 
 

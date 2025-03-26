@@ -54,6 +54,15 @@ class UsersComponent extends Component
         $this->buscador = '';
         $this->resetPage();
     }
+
+    public function actualizarOrden($ids)
+    {
+        foreach ($ids as $index => $id) {
+            User::where('id', $id)->update(['posicion' => $index + 1]);
+        }
+        session()->flash('success', 'Usuario actualizado correctamente.');
+
+    }
     
     public function render()
     {
@@ -61,6 +70,7 @@ class UsersComponent extends Component
             ->when($this->buscador, fn($q) =>
                 $q->where('name', 'like', '%' . $this->buscador . '%')
             )
+            ->orderBy('posicion')
             ->paginate(10);
 
         return view('livewire.backoffice.users.users-component', compact('usuarios'));
