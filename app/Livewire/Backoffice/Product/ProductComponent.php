@@ -59,12 +59,22 @@ class ProductComponent extends Component
         $this->buscador = '';
     }
 
+    public function actualizarOrden($ids)
+    {
+        foreach ($ids as $index => $id) {
+            Producto::where('id', $id)->update(['posicion' => $index + 1]);
+        }
+        session()->flash('success', 'Producto actualizado correctamente.');
+
+    }
+
     public function render()
     {
         $productos = Producto::whereNull('deleted_at')
             ->when($this->buscador, fn($q) =>
                 $q->where('nombre', 'like', '%' . $this->buscador . '%')
             )
+            ->orderBy('posicion', 'asc')
             ->paginate(10);
     
         return view('livewire.backoffice.product.product-component', compact('productos'));

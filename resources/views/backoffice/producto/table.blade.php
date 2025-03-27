@@ -3,7 +3,8 @@
         <div class="overflow-x-auto bg-white rounded-lg shadow">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
-                    <tr>
+                    <tr>  
+                        <th class="w-4"></th> <!-
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
@@ -13,7 +14,9 @@
                 </thead>
                 <tbody id="productos-table" class="bg-white divide-y divide-gray-200">
                     @foreach ($productos as $producto)
-                        <tr class="hover:bg-gray-50" wire:key="producto-{{ $producto->id }}">
+                    
+                        <tr class="hover:bg-gray-50 cursor-move select-none" wire:key="producto-{{ $producto->id }}"  data-id="{{ $producto->id }}">
+                            <td class="px-4 text-gray-400 drag-handle">☰</td> <!-- Nuevo handle -->
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $producto->nombre }}</td>
                             <td class="px-6 py-4 text-sm text-gray-900">{{ $producto->descripcion }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ number_format($producto->precio, 2) }}</td>
@@ -46,8 +49,10 @@
         <div class="flex justify-center mt-4">
             {{ $productos->links('pagination::custom') }}
         </div>
+        <div wire:loading wire:target="actualizarOrden" >
+            <x-spinner />
+        </div>
 
-    
     @else
         <div class="bg-white rounded-lg shadow p-6 text-center">
             <p class="text-gray-500">No hay productos disponibles</p>
@@ -65,7 +70,7 @@
                 ghostClass: 'bg-blue-100',
                 onEnd: function (evt) {
                     const orden = Array.from(evt.to.children).map(row => row.dataset.id);
-                    // Livewire.find(livewireId).call(wireMethod, orden);
+                    @this.call('actualizarOrden', orden);
                 },
             });
 

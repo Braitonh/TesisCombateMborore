@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\Backoffice\Cliente\ClienteComponent;
+use App\Livewire\Backoffice\Cliente\ClienteFormComponent;
 use App\Livewire\Backoffice\Product\ProductComponent;
 use App\Livewire\Backoffice\Product\ProductFormComponent;
 use App\Livewire\Backoffice\Users\UsersComponent;
@@ -26,3 +28,7 @@ Route::get('/productos/{productoId}/edit', ProductFormComponent::class)->name('p
 Route::get('/usuarios', UsersComponent::class)->name('usuarios.index');
 Route::get('/usuarios/create', UsersFormComponent::class)->name('usuarios.create');
 Route::get('/usuarios/{userId}/edit', UsersFormComponent::class)->name('usuarios.edit');
+
+Route::get('/clientes', ClienteComponent::class)->name('clientes.index');
+Route::get('/clientes/create', ClienteFormComponent::class)->name('clientes.create');
+Route::get('/clientes/{clienteId}/edit', ClienteFormComponent::class)->name('clientes.edit');

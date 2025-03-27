@@ -50,10 +50,18 @@
                     />
                     <x-menu-with-sub-menu 
                     id="menu-usuarios" 
-                    icon="fa-solid fa-users"
+                    icon="fa-solid fa-user"
                     name="Usuarios" 
                     :subMenus="[
                             ['id' => 'usuarios', 'route' => 'usuarios.index', 'name' => 'Lista de usuarios'],
+                        ]"
+                    />
+                    <x-menu-with-sub-menu 
+                    id="menu-clientes" 
+                    icon="fa-solid fa-users"
+                    name="Clientes" 
+                    :subMenus="[
+                            ['id' => 'clientes', 'route' => 'clientes.index', 'name' => 'Lista de clientes'],
                         ]"
                     />
                 </ul>
