@@ -20,4 +20,10 @@ class Cliente extends Model
         'password',
     ];
 
+    // Relación: Cliente tiene muchos Pedidos
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class); // 1 cliente => N pedidos
+    }
+
 }
