@@ -28,7 +28,7 @@ class Pedido extends Model
     // Relación: Pedido tiene muchos Productos (relación muchos a muchos)
     public function productos()
     {
-        return $this->belongsToMany(Producto::class, 'pedido_producto')
+        return $this->belongsToMany(Producto::class, 'table_pedido_producto')
                     ->withPivot('cantidad', 'precio_unitario', 'subtotal')
                     ->withTimestamps();
     }

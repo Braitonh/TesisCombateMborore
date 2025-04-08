@@ -36,6 +36,22 @@
         </div>
 
         <div>
+            <label class="block text-gray-700">Imagen</label>
+            <input type="file" wire:model="imagen" class="w-full px-4 py-2 border rounded-md" accept="image/*">
+            @error('imagen') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+        
+            {{-- Vista previa de la imagen temporal (nueva) o existente --}}
+            <div class="mt-2">
+                @if ($imagen)
+                    <img src="{{ $imagen->temporaryUrl() }}" class="h-32 object-cover rounded">
+                @elseif ($producto?->imagen)
+                    <img src="{{ asset($producto->imagen) }}" class="h-32 object-cover rounded">
+                @endif
+            </div>
+        </div>
+        
+
+        <div>
             <label class="flex items-center cursor-pointer">
                 <div class="relative">
                     <input type="checkbox" wire:model="activo" class="sr-only peer">

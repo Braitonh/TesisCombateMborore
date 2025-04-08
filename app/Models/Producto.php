@@ -19,6 +19,7 @@ class Producto extends Model
         'precio',
         'stock',
         'activo',
+        'imagen',
     ];
 
     // Relación: Un producto puede estar en muchos pedidos

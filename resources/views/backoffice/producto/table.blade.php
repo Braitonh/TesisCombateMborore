@@ -21,6 +21,9 @@
                             <td class="px-6 py-4 text-sm text-gray-900">{{ $producto->descripcion }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ number_format($producto->precio, 2) }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $producto->stock }}</td>
+                            {{-- <td>
+                                <img src="{{ asset($producto->imagen) }}" class="h-16 rounded" alt="Imagen del producto">
+                            </td> --}}
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <div class="flex items-center justify-center space-x-3">
 

@@ -5,9 +5,13 @@ namespace App\Livewire\Backoffice\Product;
 use App\Models\Producto;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class ProductFormComponent extends Component
 {
+
+    use WithFileUploads;
+
 
     #[Rule('required|string|max:255')]
     public string $nombre = '';
@@ -26,6 +30,8 @@ class ProductFormComponent extends Component
 
     public ?Producto $producto = null;
 
+    #[Rule('nullable|image|max:1024')] // 1MB máx
+    public $imagen;
 
     public function mount(?int $productoId = null): void
     {
@@ -38,6 +44,11 @@ class ProductFormComponent extends Component
     public function save()
     {
         $data = $this->validate();
+        
+        if ($this->imagen) {
+            $path = $this->imagen->store('public/productos');
+            $data['imagen'] = str_replace('public/', 'storage/', $path);
+        }
 
         if ($this->producto) {
             $this->producto->update($data);

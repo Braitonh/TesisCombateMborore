@@ -45,7 +45,7 @@
                     icon="fa-solid fa-cart-shopping"
                     name="Pedidos" 
                     :subMenus="[
-                            ['id' => 'pedidos', 'route' => 'productos.index', 'name' => 'Lista de pedidos'],
+                            ['id' => 'pedidos', 'route' => 'pedidos.index', 'name' => 'Lista de pedidos'],
                         ]"
                     />
                     <x-menu-with-sub-menu 
