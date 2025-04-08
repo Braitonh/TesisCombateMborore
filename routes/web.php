@@ -8,6 +8,8 @@ use App\Livewire\Backoffice\Product\ProductComponent;
 use App\Livewire\Backoffice\Product\ProductFormComponent;
 use App\Livewire\Backoffice\Users\UsersComponent;
 use App\Livewire\Backoffice\Users\UsersFormComponent;
+use App\Models\Pedido;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,3 +39,5 @@ Route::get('/clientes/{clienteId}/edit', ClienteFormComponent::class)->name('cli
 
 Route::get('/pedidos', PedidosIndex::class)->name('pedidos.index');
 Route::get('/pedidos/create', PedidosForm::class)->name('pedidos.create');
+
+

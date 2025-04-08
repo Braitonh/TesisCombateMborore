@@ -1,6 +1,14 @@
 <div class="container mx-auto">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Todos los productos</h1>
+        <div class="flex">
+            <a href="{{ route('pedidos.index') }}" class="flex items-center font-bold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.75.75 0 01-.75.75H4.56l3.22 3.22a.75.75 0 11-1.06 1.06l-4.5-4.5a.75.75 0 010-1.06l4.5-4.5a.75.75 0 111.06 1.06L4.56 7.25H14.25A.75.75 0 0115 8z" clip-rule="evenodd"/>
+                </svg>
+            </a>
+            <h1 class="text-2xl font-bold">Todos los productos</h1>
+
+        </div>
         <div class="relative bg-teal-100 p-2 rounded-lg cursor-pointer" wire:click="toggleCartModal">
             <i class="fa-solid fa-cart-shopping text-teal-600 text-2xl animate-wiggle"></i>
             <div class="px-1 py-0.5 bg-teal-500 min-w-5 rounded-full text-center text-white text-xs absolute -top-2 -end-1 translate-x-1/4 text-nowrap">
@@ -9,6 +17,14 @@
             </div>
         </div>
     </div>
+    @if (session('ticket_path'))
+        <div class="mt-4 p-4 bg-green-100 text-green-800 rounded mb-4 flex justify-between items-center">
+            <span class="font-semibold">Pedido confirmado</span>
+            <a href="{{ session('ticket_path') }}" target="_blank" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                Ver Ticket PDF
+            </a>
+        </div>
+    @endif
 
     @if ($showSuccessAlert)
         <div

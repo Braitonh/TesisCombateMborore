@@ -27,6 +27,9 @@
     </div>
     @endif
 
+    @include('backoffice.pedidos.table', ['pedidos' => $pedidos])
+
+
 </div>
 
 <script>

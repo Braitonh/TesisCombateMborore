@@ -5,6 +5,7 @@ namespace App\Livewire\Backoffice\Pedidos;
 use App\Models\Cliente;
 use App\Models\Pedido;
 use App\Models\Producto;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -44,22 +45,46 @@ class PedidosForm extends Component
             return;
         }
     
-        if (!$this->cliente) {
-            $this->addError('cliente', 'Debe seleccionar un cliente.');
+        $hayDatosCliente = $this->nombre || $this->email || $this->telefono || $this->direccion;
+    
+        if (!$this->cliente && !$hayDatosCliente) {
+            $this->addError('cliente', 'Debe seleccionar un cliente o ingresar los datos para crear uno nuevo.');
             return;
         }
-
     
         DB::beginTransaction();
     
         try {
+            // Crear cliente si no se encontró y se escribieron datos
+            if (!$this->cliente && $hayDatosCliente) {
+                $this->validate([
+                    'nombre' => 'required|string|max:255',
+                    'email' => 'nullable|email|max:255',
+                    'telefono' => 'nullable|string|max:50',
+                    'direccion' => 'nullable|string|max:255',
+                ]);
+    
+                $cliente = Cliente::create([
+                    'nombre' => $this->nombre,
+                    'email' => $this->email,
+                    'telefono' => $this->telefono,
+                    'direccion' => $this->direccion,
+                    'password' => 'root'
+                ]);
+    
+                $this->cliente_id = $cliente->id;
+                $this->cliente = $cliente;
+                $this->clienteEncontrado = true;
+            }
+
+    
             $pedido = Pedido::create([
                 'cliente_id' => $this->cliente_id,
                 'fecha' => now(),
                 'total' => $this->total,
                 'estado' => 'pendiente',
             ]);
-
+    
             foreach ($this->shoppingCart as $producto) {
                 $cantidad = $this->cantidades[$producto->id] ?? 1;
                 $precioUnitario = $producto->precio;
@@ -74,8 +99,15 @@ class PedidosForm extends Component
     
             DB::commit();
     
-            $this->reset(['shoppingCart', 'cantidades', 'showModal', 'cliente', 'buscador', 'nombre', 'email', 'telefono', 'direccion', 'clienteEncontrado' ]);
-            session()->flash('success', 'Pedido guardado exitosamente.');
+            // Generar PDF del ticket
+            $pedido->load('cliente', 'productos');
+            $pdf = Pdf::loadView('tickets.pedido', ['pedido' => $pedido]);
+            $pdfPath = storage_path("app/public/tickets/pedido_{$pedido->id}.pdf");
+            $pdf->save($pdfPath);
+    
+            session()->flash('ticket_path', asset("storage/tickets/pedido_{$pedido->id}.pdf"));
+            $this->reset(['shoppingCart', 'cantidades', 'showModal', 'cliente', 'buscador', 'nombre', 'email', 'telefono', 'direccion', 'clienteEncontrado']);
+            session()->flash('success', 'Pedido guardado exitosamente. Ticket generado.');
     
         } catch (\Exception $e) {
             DB::rollBack();
@@ -83,6 +115,7 @@ class PedidosForm extends Component
             $this->addError('pedido', 'Error al guardar el pedido.');
         }
     }
+    
 
     public function buscarCliente() 
     {
