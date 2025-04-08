@@ -46,6 +46,7 @@
                     name="Pedidos" 
                     :subMenus="[
                             ['id' => 'pedidos', 'route' => 'pedidos.index', 'name' => 'Lista de pedidos'],
+                            ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Detalle de pedidos'],
                         ]"
                     />
                     <x-menu-with-sub-menu 

@@ -2,6 +2,7 @@
 
 use App\Livewire\Backoffice\Cliente\ClienteComponent;
 use App\Livewire\Backoffice\Cliente\ClienteFormComponent;
+use App\Livewire\Backoffice\Pedidos\Detalle;
 use App\Livewire\Backoffice\Pedidos\PedidosForm;
 use App\Livewire\Backoffice\Pedidos\PedidosIndex;
 use App\Livewire\Backoffice\Product\ProductComponent;
@@ -39,5 +40,6 @@ Route::get('/clientes/{clienteId}/edit', ClienteFormComponent::class)->name('cli
 
 Route::get('/pedidos', PedidosIndex::class)->name('pedidos.index');
 Route::get('/pedidos/create', PedidosForm::class)->name('pedidos.create');
+Route::get('/pedidos/detalle', Detalle::class)->name('pedidos.detalle');
 
 

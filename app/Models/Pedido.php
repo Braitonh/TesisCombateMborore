@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,6 +19,27 @@ class Pedido extends Model
         'estado',
         'total',
     ];
+
+    public function getTiempoEstadoAttribute()
+    {
+        // $diffInMinutes = Carbon::parse($this->fecha)->diffInMinutes(now());
+        $diffInSeconds = Carbon::parse($this->fecha)->diffInSeconds(now());
+        if ($diffInSeconds < 10) {
+            return 'bg-green-50 border-green-400';
+        } elseif ($diffInSeconds < 20) {
+            return 'bg-yellow-50 border-yellow-400';
+        } else {
+            return 'bg-red-50 border-red-400';
+        }
+
+        // if ($diffInMinutes < 1) {
+        //     return 'bg-green-50 border-green-400';
+        // } elseif ($diffInMinutes < 2) {
+        //     return 'bg-yellow-50 border-yellow-400';
+        // } else {
+        //     return 'bg-red-50 border-red-400';
+        // }
+    }
 
     // Relación: Pedido pertenece a un Cliente
     public function cliente()
