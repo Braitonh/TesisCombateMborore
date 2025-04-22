@@ -52,6 +52,8 @@ class Pedido extends Model
     {
         return $this->belongsToMany(Producto::class, 'table_pedido_producto')
                     ->withPivot('cantidad', 'precio_unitario', 'subtotal')
-                    ->withTimestamps();
+                    ->withTimestamps()
+                    ->orderBy('productos.id'); // o 'productos.id' si preferís por ID
+
     }
 }
