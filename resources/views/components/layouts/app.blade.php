@@ -4,9 +4,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.tailwindcss.com"></script>
+        
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+        
         <style>
             body {
                 font-family: 'Poppins', sans-serif;
@@ -91,6 +93,30 @@
         </div>
     </div>
 
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.1/echo.iife.js"></script>
+    
+    <script>
+        window.Pusher = Pusher;
+    
+        window.Echo = new Echo({
+            broadcaster: 'pusher',
+            key: "app-key", // 👈 valor literal
+            cluster: 'mt1',
+            wsHost: window.location.hostname,
+            wsPort: 6001,
+            forceTLS: false,
+            disableStats: true,
+            enabledTransports: ['ws'],
+        });
+    </script>
+    <script>
+        Echo.channel('orders')
+            .listen('.order.created', (e) => {
+                console.log('[Echo] Evento recibido en JS:', e);
+                Livewire.dispatch('echo:orders,order.created', e); // ⬅️ reenvía a Livewire
+            });
+    </script>
 </body>
 </html>
 

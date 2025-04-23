@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backoffice\Pedidos;
 
+use App\Events\OrderCreated;
 use App\Models\Cliente;
 use App\Models\Pedido;
 use App\Models\Producto;
@@ -108,7 +109,9 @@ class PedidosForm extends Component
             session()->flash('ticket_path', asset("storage/tickets/pedido_{$pedido->id}.pdf"));
             $this->reset(['shoppingCart', 'cantidades', 'showModal', 'cliente', 'buscador', 'nombre', 'email', 'telefono', 'direccion', 'clienteEncontrado']);
             session()->flash('success', 'Pedido guardado exitosamente. Ticket generado.');
-    
+            
+            event(new OrderCreated($pedido->toArray()));
+
         } catch (\Exception $e) {
             DB::rollBack();
             report($e);

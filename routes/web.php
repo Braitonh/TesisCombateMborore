@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\EventoDePrueba;
 use App\Livewire\Backoffice\Cliente\ClienteComponent;
 use App\Livewire\Backoffice\Cliente\ClienteFormComponent;
 use App\Livewire\Backoffice\Pedidos\Detalle;
@@ -9,8 +10,10 @@ use App\Livewire\Backoffice\Product\ProductComponent;
 use App\Livewire\Backoffice\Product\ProductFormComponent;
 use App\Livewire\Backoffice\Users\UsersComponent;
 use App\Livewire\Backoffice\Users\UsersFormComponent;
+use App\Livewire\OrderList;
 use App\Models\Pedido;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,5 +44,6 @@ Route::get('/clientes/{clienteId}/edit', ClienteFormComponent::class)->name('cli
 Route::get('/pedidos', PedidosIndex::class)->name('pedidos.index');
 Route::get('/pedidos/create', PedidosForm::class)->name('pedidos.create');
 Route::get('/pedidos/detalle', Detalle::class)->name('pedidos.detalle');
+
 
 
