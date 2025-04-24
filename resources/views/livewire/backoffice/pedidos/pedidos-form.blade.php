@@ -77,7 +77,7 @@
                 </div>
 
                 {{-- Resumen de compra --}}
-                <div class="flex flex-col gap-y-4">
+                <form  wire:submit.prevent="savePedido"  class="flex flex-col gap-y-4">
                     <div class="bg-gray-50 border rounded-lg p-4 h-fit">
                         <h2 class="text-lg font-semibold mb-4">Datos del cliente</h2>
                         <div class="mb-4 display flex flex-direccion row space-x-2">
@@ -87,11 +87,11 @@
                                 placeholder="Buscar cliente..."
                                 class="w-1/2 sm:w-1/2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                             >
-                            <button wire:click="buscarCliente" class="w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex justify-center items-center">
+                            <button type="button" wire:click="buscarCliente" class="w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex justify-center items-center">
                                 <i class="fas fa-search text-white text-lg"></i>
                             </button>
 
-                            <button wire:click="limpiarBuscador" class="w-10 h-10 bg-gray-500 hover:bg-gray-600 text-white rounded-full flex justify-center items-center">
+                            <button type="button" wire:click="limpiarBuscador" class="w-10 h-10 bg-gray-500 hover:bg-gray-600 text-white rounded-full flex justify-center items-center">
                                 <i class="fas fa-trash text-lg"></i>
                             </button>
 
@@ -101,39 +101,35 @@
                         @elseif ($clienteEncontrado === false)
                             <div class="mt-4 p-4 bg-red-100 text-red-800 rounded mb-4">❌ Cliente no encontrado</div>
                         @endif
-                        <div wire:submit="save" class="">
-                            <div>
-                                <label class="block text-gray-700">Nombre</label>
-                                <input type="text" wire:model="nombre" class="w-full px-4 py-2 border rounded-md">
-                                @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        
+                            <div >
+                                <div>
+                                    <label class="block text-gray-700">Nombre</label>
+                                    <input type="text" wire:model="nombre" class="w-full px-4 py-2 border rounded-md">
+                                    @error('nombre') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
+                        
+                                <div>
+                                    <label class="block text-gray-700">Email</label>
+                                    <input type="email" wire:model="email" class="w-full px-4 py-2 border rounded-md">
+                                    @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
+                        
+                                <div>
+                                    <label class="block text-gray-700">Telefono</label>
+                                    <input type="text" wire:model="telefono" class="w-full px-4 py-2 border rounded-md">
+                                    @error('telefono') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
+                        
+                                <div>
+                                    <label class="block text-gray-700">Direccion</label>
+                                    <input type="text" wire:model="direccion" class="w-full px-4 py-2 border rounded-md">
+                                    @error('direccion') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
                             </div>
-                    
-                            <div>
-                                <label class="block text-gray-700">Email</label>
-                                <input type="email" wire:model="email" class="w-full px-4 py-2 border rounded-md">
-                                @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                            </div>
-                    
-                            <div>
-                                <label class="block text-gray-700">Telefono</label>
-                                <input type="text" wire:model="telefono" class="w-full px-4 py-2 border rounded-md">
-                                @error('telefono') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                            </div>
-                    
-                            <div>
-                                <label class="block text-gray-700">Direccion</label>
-                                <input type="text" wire:model="direccion" class="w-full px-4 py-2 border rounded-md">
-                                @error('direccion') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
                     </div>
                     <div class="bg-gray-50 border rounded-lg p-4 h-fit">
                         <h2 class="text-lg font-semibold mb-4">Resumen de compra</h2>
-    
-                        <div class="flex justify-between text-sm mb-2">
-                            <span>Envíos</span>
-                            <span class="text-green-600">Gratis</span>
-                        </div>
     
                         <hr class="my-2" />
     
@@ -150,12 +146,12 @@
                             </div>
                         @enderror
     
-                        <button wire:click='savePedido' class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">
+                        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">
                             Confirmar compra
                         </button>
     
                     </div>
-                </div>
+                </form>
                 
                 <div class="col-span-1 row-start-3 col-start-3 flex justify-end">
                     <button wire:click="toggleCartModal" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">

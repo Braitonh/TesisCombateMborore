@@ -38,8 +38,6 @@
                                 <tr>
                                     <th class="px-3 py-2">Nombre</th>
                                     <th class="px-3 py-2">Cantidad</th>
-                                    <th class="px-3 py-2">Accion</th>
-
                                 </tr>
                             </thead>
                             <tbody>
@@ -47,10 +45,6 @@
                                     <tr class="border-t border-gray-200">
                                         <td class="px-3 py-2">{{ $producto->nombre }}</td>
                                         <td class="px-3 py-2">{{ $producto->pivot->cantidad }}</td>
-                                        <td class="px-3 py-2 flex items-center gap-2">
-                                            <input type="checkbox" wire:model.defer="productosListos.{{ $pedido->id }}.{{ $producto->id }}"
-                                                   class="form-checkbox h-5 w-5 text-green-600 rounded">
-                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -66,11 +60,12 @@
                 </div>
             </div>
         @endforeach
-    
     </div>
     
 
-
+    <div wire:loading wire:target="completarPedido" >
+        <x-spinner />
+    </div>
 
 </div>
 

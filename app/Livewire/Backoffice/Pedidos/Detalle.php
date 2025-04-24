@@ -18,6 +18,7 @@ class Detalle extends Component
     public function cargarPedidos()
     {
         $this->pedidos = Pedido::with(['cliente', 'productos'])
+            ->where('estado', 'Pendiente')
             ->whereDate('fecha', today())
             ->orderBy('id', 'desc')
             ->get();
@@ -29,9 +30,17 @@ class Detalle extends Component
         // Recarga la lista completa desde la base de datos
         $this->cargarPedidos();
 
-        // 📝 Opcional: Si querés evitar la consulta, podés hacer:
-        // $this->pedidos->prepend((object) $payload['order']);
     }
+
+    public function completarPedido($pedidoId)
+    {
+        $pedido = Pedido::findOrFail($pedidoId);
+        $pedido->estado = "completado";
+        $pedido->save();
+        $this->cargarPedidos();
+
+    }
+
 
     public function render()
     {

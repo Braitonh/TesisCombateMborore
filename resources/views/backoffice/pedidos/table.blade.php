@@ -17,7 +17,7 @@
                     <tr class="hover:bg-gray-50" wire:key="pedido-{{ $pedido->id }}">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $pedido->id }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $pedido->cliente_id }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $pedido->total }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$ {{ $pedido->total }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $pedido->estado }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $pedido->fecha }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

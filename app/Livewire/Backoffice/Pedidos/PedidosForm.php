@@ -47,8 +47,8 @@ class PedidosForm extends Component
         }
     
         $hayDatosCliente = $this->nombre || $this->email || $this->telefono || $this->direccion;
-    
-        if (!$this->cliente && !$hayDatosCliente) {
+
+        if (!$hayDatosCliente) {
             $this->addError('cliente', 'Debe seleccionar un cliente o ingresar los datos para crear uno nuevo.');
             return;
         }
@@ -58,13 +58,14 @@ class PedidosForm extends Component
         try {
             // Crear cliente si no se encontró y se escribieron datos
             if (!$this->cliente && $hayDatosCliente) {
+                
                 $this->validate([
                     'nombre' => 'required|string|max:255',
-                    'email' => 'nullable|email|max:255',
-                    'telefono' => 'nullable|string|max:50',
-                    'direccion' => 'nullable|string|max:255',
+                    'email' => 'required|email|unique:clientes,email,',
+                    'telefono' => 'required|string|max:50',
+                    'direccion' => 'required|string|max:255',
                 ]);
-    
+
                 $cliente = Cliente::create([
                     'nombre' => $this->nombre,
                     'email' => $this->email,
@@ -72,18 +73,22 @@ class PedidosForm extends Component
                     'direccion' => $this->direccion,
                     'password' => 'root'
                 ]);
+
+
     
                 $this->cliente_id = $cliente->id;
                 $this->cliente = $cliente;
                 $this->clienteEncontrado = true;
             }
 
+            
+
     
             $pedido = Pedido::create([
                 'cliente_id' => $this->cliente_id,
                 'fecha' => now(),
                 'total' => $this->total,
-                'estado' => 'pendiente',
+                'estado' => 'Pendiente',
             ]);
     
             foreach ($this->shoppingCart as $producto) {
@@ -112,10 +117,12 @@ class PedidosForm extends Component
             
             event(new OrderCreated($pedido->toArray()));
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
             report($e);
-            $this->addError('pedido', 'Error al guardar el pedido.');
+            $this->addError('pedido', 'Error: ' . $e->getMessage());
         }
     }
     
