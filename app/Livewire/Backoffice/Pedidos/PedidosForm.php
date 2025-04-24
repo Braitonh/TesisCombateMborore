@@ -242,6 +242,7 @@ class PedidosForm extends Component
     public function render()
     {
         $productos = Producto::whereNull('deleted_at')
+            ->where('activo', true)
             ->orderBy('posicion')
             ->get();
 

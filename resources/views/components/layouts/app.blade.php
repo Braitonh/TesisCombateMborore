@@ -25,15 +25,7 @@
 
             <nav>
                 <ul class="list-none">
-                    <x-menu-with-sub-menu 
-                        id="menu-dashboard" 
-                        icon="fa-solid fa-house"
-                        name="Dashboard" 
-                        :subMenus="[
-                            ['id' => 'sub1', 'route' => 'welcome', 'name' => 'Inicio'],
-                            ['id' => 'sub2', 'route' => 'welcome', 'name' => 'Perfil', 'role' => 'admin']
-                        ]"
-                    />
+
                     <x-menu-with-sub-menu 
                         id="menu-productos" 
                         icon="fa-solid fa-burger" 
@@ -70,7 +62,13 @@
                 </ul>
             </nav>
             <div class="mt-auto">
-                <a href="#" class="block py-2 px-4 mt-5 bg-red-600 text-center rounded">Logout</a>
+                <form action="{{ route('logout') }}" method="POST" class="w-full">
+                    @csrf
+                    <button type="submit"
+                            class="block w-full py-2 px-4 mt-5 bg-red-600 text-center rounded text-white hover:bg-red-700 transition">
+                        Logout
+                    </button>
+                </form>
             </div>
         </aside>
         
