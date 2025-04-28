@@ -28,29 +28,47 @@
               Bebidas
             </button>
           </div>
+          @if (session('ticket_path'))
+            <div class="mt-4 p-4 bg-green-100 text-green-800 rounded mb-4 flex justify-between items-center">
+                <span class="font-semibold">Pedido confirmado</span>
+                <a href="{{ session('ticket_path') }}" target="_blank" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                    Ver Ticket PDF
+                </a>
+            </div>
+          @endif
+  
         </div>
   
         <!-- Tarjetas de Productos -->
         <div>
             <div class="flex justify-between items-center mb-4">
               <h3 class="font-semibold text-xl">Productos destacados</h3>
-              <div class="relative bg-blue-100 p-2 rounded-lg cursor-pointer" wire:click="toggleCartModal">
-                <i class="fa-solid fa-cart-shopping text-blue-500 text-2xl animate-wiggle"></i>
-                <div class="px-1 py-0.5 bg-blue-500 min-w-5 rounded-full text-center text-white text-xs absolute -top-2 -end-1 translate-x-1/4 text-nowrap">
-                  <div @class(['absolute top-0 start-0 rounded-full -z-10 bg-blue-200 w-full h-full'])></div>
-                  0
+              <div class="relative bg-red-100 p-2 rounded-lg cursor-pointer" wire:click="toggleCartModal">
+                <i class="fa-solid fa-cart-shopping text-red-500 text-2xl animate-wiggle"></i>
+                <div class="px-1 py-0.5 bg-red-500 min-w-5 rounded-full text-center text-white text-xs absolute -top-2 -end-1 translate-x-1/4 text-nowrap">
+                  <div @class(['absolute top-0 start-0 rounded-full -z-10 bg-red-200 w-full h-full' , 'animate-ping' => count($shoppingCart) > 0])></div>
+                  {{count($shoppingCart)}}
                 </div>
               </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               @foreach ($productos as $producto)
-                @include('backoffice.pedidos.cardPedido', ['producto' => $producto])
+              @include('backoffice.pedidos.cardPedido', ['producto' => $producto, 'color' => 'red'])
               @endforeach
             </div>
           </div>
         </div>
 
-      <div class="lg:col-span-1 flex flex-col gap-6">
+        @if ($showSuccessAlert)
+          <div
+              id="success-alert"
+              class="fixed top-4 right-4 bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded shadow-lg z-50 transition-all duration-300"
+          >
+              <strong class="font-semibold">¡Éxito!</strong> Producto agregado al carrito.
+          </div>
+      @endif
+
+      <div class="lg:col-span-1 flex flex-col gap-5">
         <!-- 1. Reseñas -->
         <div class="bg-white rounded-xl shadow-lg p-4 h-fit">
           <h3 class="font-semibold text-xl mb-4">Reseñas recientes</h3>
@@ -93,53 +111,21 @@
             </li>
           </ul>
         </div>
+
+        <div class="bg-cover bg-center rounded-lg p-8 h-[500px] flex flex-col justify-between" style="background-image: url('{{ asset('images/banner2.png') }}');">
+          <h2 class="text-3xl font-bold text-white">Explora nuevos sabores</h2>
+          <button class="mt-8 px-4 py-2 bg-red-500 text-white rounded">Ordenar ahora</button>
+        </div>
+
+        <div class="bg-cover bg-center rounded-lg p-8 h-[500px] flex flex-col justify-between" style="background-image: url('{{ asset('images/banner2.png') }}');">
+          <h2 class="text-3xl font-bold text-white">Explora nuevos sabores</h2>
+        </div>
       
-        <!-- 2. Resumen de compra -->
-        {{-- <div class="bg-white rounded-xl shadow-lg p-4">
-          <h3 class="font-semibold text-xl mb-4">Tu orden</h3>
-          <ul class="divide-y divide-gray-200">
-            <li class="py-2 flex justify-between">
-              <span>Hamburguesa clásica</span>
-              <span>$5.99</span>
-            </li>
-            <li class="py-2 flex justify-between">
-                <span>Hamburguesa clásica</span>
-                <span>$5.99</span>
-            </li>
-            <li class="py-2 flex justify-between">
-            <span>Hamburguesa clásica</span>
-            <span>$5.99</span>
-            </li>
-            <li class="py-2 flex justify-between">
-            <span>Hamburguesa clásica</span>
-            <span>$5.99</span>
-            </li>
-            <li class="py-2 flex justify-between">
-            <span>Hamburguesa clásica</span>
-            <span>$5.99</span>
-            </li>            <li class="py-2 flex justify-between">
-            <span>Hamburguesa clásica</span>
-            <span>$5.99</span>
-            </li>
-            <li class="py-2 flex justify-between">
-            <span>Hamburguesa clásica</span>
-            <span>$5.99</span>
-            </li>
-            <li class="py-2 flex justify-between">
-            <span>Hamburguesa clásica</span>
-            <span>$5.99</span>
-            </li>
-            <!-- más ítems -->
-          </ul>
-          <div class="border-t pt-4 mt-4 flex justify-between font-semibold">
-            <span>Total</span>
-            <span>$14.98</span>
-          </div>
-          <button class="w-full mt-4 bg-blue-500 text-white py-2 rounded hover:bg-red-600">
-            Pagar ahora
-          </button>
-        </div> --}}
       </div>
+
+      @if ($showModal && !empty($shoppingCart))
+        @include('venta.modal')
+      @endif
 
     </div>
       <!-- Footer -->
@@ -150,3 +136,18 @@
     </footer>
   </div>
   
+  <script>
+    window.addEventListener('hide-success-alert', () => {
+        setTimeout(() => {
+            const alert = document.getElementById('success-alert');
+            if (alert) {
+                alert.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => {
+                    alert.style.visibility = 'hidden';
+                    window.Livewire.dispatch('alertHidden'); // Livewire 3 style
+
+                }, 100); // espera a que termine la animación CSS
+            }
+        }, 1000);
+    });
+</script>
