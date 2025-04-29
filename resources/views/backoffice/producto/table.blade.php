@@ -21,11 +21,18 @@
                             <td class="px-6 py-4 text-sm text-gray-900">{{ $producto->descripcion }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ number_format($producto->precio, 2) }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $producto->stock }}</td>
-                            {{-- <td>
-                                <img src="{{ asset($producto->imagen) }}" class="h-16 rounded" alt="Imagen del producto">
-                            </td> --}}
+
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <div class="flex items-center justify-center space-x-3">
+                                    <!-- Toggle Activar/Desactivar -->
+                                    <label class="flex items-center cursor-pointer">
+                                        <div class="relative">
+                                            <input type="checkbox" wire:change="toggleActivo({{ $producto->id }})" {{ $producto->activo ? 'checked' : '' }} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 transition-colors"></div>
+                                            <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md peer-checked:translate-x-full transition-transform"></div>
+                                        </div>
+                                    </label>
+             
 
                                     <!-- Botón Editar -->
                                     <a href="{{ route('productos.edit', $producto->id) }}" 

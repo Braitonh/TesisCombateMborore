@@ -68,6 +68,19 @@ class ProductComponent extends Component
 
     }
 
+    public function toggleActivo($productoId)
+    {
+        $producto = Producto::find($productoId);
+
+        if ($producto) {
+            $producto->activo = !$producto->activo;
+            $producto->save();
+        }
+
+        session()->flash('success', 'Producto actualizado correctamente.');
+
+    }
+
     public function render()
     {
         $productos = Producto::whereNull('deleted_at')

@@ -15,19 +15,30 @@
         <div>
           <h3 class="font-semibold text-xl mb-4">Categorías</h3>
           <div class="flex gap-4">
-            <button class="flex flex-col items-center bg-white rounded-lg shadow-md p-4 hover:shadow-xl">
-              <img src="{{ asset('images/icono_pizza.svg') }}" class="h-10 mb-2">
-              Pizzas
+            <!-- Pizzas -->
+            <button wire:click="$set('filtroCategoria', 'pizzas')" 
+                class="flex flex-col items-center rounded-lg shadow-md p-4 hover:shadow-xl 
+                {{ $filtroCategoria === 'pizzas' ? 'ring-2 ring-red-400' : 'bg-white' }}">
+                <img src="{{ asset('images/icono_pizza.svg') }}" class="h-10 mb-2">
+                Pizzas
             </button>
-            <button class="flex flex-col items-center bg-white rounded-lg shadow-md p-4 hover:shadow-xl">
-              <img src="{{ asset('images/icono_hamburguesa.svg') }}" class="h-10 mb-2">
-              Hamburguesas
+        
+            <!-- Hamburguesas -->
+            <button wire:click="$set('filtroCategoria', 'hamburguesas')" 
+                class="flex flex-col items-center rounded-lg shadow-md p-4 hover:shadow-xl 
+                {{ $filtroCategoria === 'hamburguesas' ? ' ring-2 ring-red-400' : 'bg-white' }}">
+                <img src="{{ asset('images/icono_hamburguesa.svg') }}" class="h-10 mb-2">
+                Hamburguesas
             </button>
-            <button class="flex flex-col items-center bg-white rounded-lg shadow-md p-4 hover:shadow-xl">
-              <img src="{{ asset('images/icono_cafe.svg') }}" class="h-10 mb-2">
-              Bebidas
+        
+            <!-- Bebidas -->
+            <button wire:click="$set('filtroCategoria', 'bebidas')" 
+                class="flex flex-col items-center rounded-lg shadow-md p-4 hover:shadow-xl 
+                {{ $filtroCategoria === 'bebidas' ? 'ring-2 ring-red-400' : 'bg-white' }}">
+                <img src="{{ asset('images/icono_cafe.svg') }}" class="h-10 mb-2">
+                Bebidas
             </button>
-          </div>
+        </div>
           @if (session('ticket_path'))
             <div class="mt-4 p-4 bg-green-100 text-green-800 rounded mb-4 flex justify-between items-center">
                 <span class="font-semibold">Pedido confirmado</span>

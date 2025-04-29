@@ -18,6 +18,8 @@ class GaleryFood extends Component
     public bool $showSuccessAlert  = false;
     public bool $showModal = false;
     public $buscador = '';
+    public string $filtroCategoria = '';
+
 
     //Cliente
     public ?int $cliente_id = null;
@@ -175,13 +177,17 @@ class GaleryFood extends Component
 
 
 
-    public function render()
-    {
-        $productos = Producto::whereNull('deleted_at')
-        ->where('activo', true)
-        ->orderBy('posicion')
-        ->get();
+public function render()
+{
+    $query = Producto::whereNull('deleted_at')
+        ->where('activo', true);
 
-        return view('livewire.galery-food', compact('productos'));
+    if ($this->filtroCategoria !== '') {
+        $query->where('categoria', $this->filtroCategoria);
     }
+
+    $productos = $query->orderBy('posicion')->get();
+
+    return view('livewire.galery-food', compact('productos'));
+}
 }

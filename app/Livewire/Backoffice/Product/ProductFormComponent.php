@@ -22,8 +22,8 @@ class ProductFormComponent extends Component
     #[Rule('required|numeric|min:0')]
     public float $precio = 0;
 
-    #[Rule('required|integer|min:0')]   
-    public int $stock = 0;
+    #[Rule('required')]   
+    public string $categoria = '';
 
     #[Rule('boolean')]
     public bool $activo = false;
@@ -37,7 +37,7 @@ class ProductFormComponent extends Component
     {
         if ($productoId) {
             $this->producto = Producto::findOrFail($productoId);
-            $this->fill($this->producto->only(['nombre', 'descripcion', 'precio', 'stock', 'activo']));
+            $this->fill($this->producto->only(['nombre', 'descripcion', 'precio', 'activo', 'categoria']));
         }
     }
 

@@ -30,9 +30,13 @@
         </div>
 
         <div>
-            <label class="block text-gray-700">Stock</label>
-            <input type="number" wire:model="stock" class="w-full px-4 py-2 border rounded-md">
-            @error('stock') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            <label class="block text-gray-700">Categoría</label>
+            <select wire:model="categoria" class="w-full px-4 py-2 border rounded-md">
+                <option value="pizzas">Pizzas</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="hamburguesas">Hamburguesas</option>
+            </select>
+            @error('categoria') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
 
         <div>
