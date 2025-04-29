@@ -18,12 +18,13 @@ class Pedido extends Model
         'fecha',
         'estado',
         'total',
+        'iniciado_en'
     ];
 
     public function getTiempoEstadoAttribute()
     {
-        // $diffInMinutes = Carbon::parse($this->fecha)->diffInMinutes(now());
-        $diffInSeconds = Carbon::parse($this->fecha)->diffInSeconds(now());
+        $diffInSeconds = Carbon::parse($this->iniciado_en)->diffInSeconds(now());
+    
         if ($diffInSeconds < 10) {
             return 'bg-green-50 border-green-400';
         } elseif ($diffInSeconds < 20) {
@@ -31,14 +32,6 @@ class Pedido extends Model
         } else {
             return 'bg-red-50 border-red-400';
         }
-
-        // if ($diffInMinutes < 1) {
-        //     return 'bg-green-50 border-green-400';
-        // } elseif ($diffInMinutes < 2) {
-        //     return 'bg-yellow-50 border-yellow-400';
-        // } else {
-        //     return 'bg-red-50 border-red-400';
-        // }
     }
 
     // Relación: Pedido pertenece a un Cliente

@@ -113,7 +113,7 @@ class GaleryFood extends Component
                 
                 $this->validate([
                     'nombre' => 'required|string|max:255',
-                    'email' => 'required|email|unique:clientes,email,',
+                    'email' => 'required',
                     'telefono' => 'required|string|max:50',
                     'direccion' => 'required|string|max:255',
                 ]);
@@ -135,7 +135,7 @@ class GaleryFood extends Component
                 'cliente_id' => $cliente->id,
                 'fecha' => now(),
                 'total' => $this->total,
-                'estado' => 'Sin confirmar',
+                'estado' => 'Nuevo',
             ]);
     
             foreach ($this->shoppingCart as $producto) {

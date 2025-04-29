@@ -9,7 +9,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                    <th class=" px-6 text-left py-3  text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                 </tr>
             </thead>
             <tbody id="pedidos-table" class="bg-white divide-y divide-gray-200">
@@ -21,10 +21,18 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $pedido->estado }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $pedido->fecha }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <a href="{{ asset('storage/tickets/pedido_' . $pedido->id . '.pdf') }}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition">
-                                Ver detalle
-                            </a>
+                            <div class="flex items-center justify-start space-x-3">
+                                <a href="{{ asset('storage/tickets/pedido_' . $pedido->id . '.pdf') }}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white text-xs font-medium rounded hover:bg-blue-600 transition">
+                                    Ver detalle
+                                </a>
+                                @if ($pedido->estado === 'Sin confirmar')
+                                    <button wire:click='iniciarPedido({{ $pedido->id }})' class="inline-flex items-center px-3 py-1.5 bg-green-500 text-white text-xs font-medium rounded hover:bg-green-600 transition">
+                                        Iniciar pedido
+                                    </button>
+                                @endif
+                            </div>
                         </td>
+
                     </tr>
                 @endforeach
             </tbody>

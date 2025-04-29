@@ -88,7 +88,8 @@ class PedidosForm extends Component
                 'cliente_id' => $this->cliente_id,
                 'fecha' => now(),
                 'total' => $this->total,
-                'estado' => 'Pendiente',
+                'estado' => 'Iniciado',
+                'iniciado_en' => now()
             ]);
     
             foreach ($this->shoppingCart as $producto) {

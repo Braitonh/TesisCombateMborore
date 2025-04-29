@@ -76,11 +76,12 @@
         <div class="flex-1 flex flex-col overflow-y-auto">
             <!-- Navbar -->
             <nav class="bg-white shadow p-4 flex justify-between items-center">
-                <input type="text" placeholder="Buscar..." class="px-4 py-2 border rounded w-1/3">
                 <div class="flex items-center space-x-4">
-                    <span class="text-gray-600">Brainton hemsouvanh</span>
-                    {{-- <img src="https://via.placeholder.com/40" class="rounded-full w-10 h-10" alt="User"> --}}
+                    <span class="text-gray-600">
+                        {{ auth()->user()->name }}
+                    </span>                
                 </div>
+                <livewire:notification-bell />
             </nav>
 
             <!-- Contenido principal con desplazamiento -->

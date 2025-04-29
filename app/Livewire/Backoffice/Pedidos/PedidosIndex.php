@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backoffice\Pedidos;
 
+use App\Events\OrderCreated;
 use App\Models\Pedido;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -29,6 +30,16 @@ class PedidosIndex extends Component
     {
         $this->resetPage();
         $this->buscador = '';
+    }
+
+    public function iniciarPedido($id)
+    {
+        $pedido = Pedido::findOrFail($id);
+        $pedido->estado = 'Iniciado';
+        $pedido->iniciado_en = now();
+        $pedido->save();
+        event(new OrderCreated($pedido->toArray()));
+
     }
     
     
