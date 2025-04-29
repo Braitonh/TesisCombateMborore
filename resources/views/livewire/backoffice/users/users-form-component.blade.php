@@ -1,6 +1,6 @@
 <div class="container mx-auto">
     <div class="flex mb-6">
-        <a href="{{ route('productos.index') }}" class="flex items-center text-gray-700 hover:text-gray-900">
+        <a href="{{ route('usuarios.index') }}" class="flex items-center text-gray-700 hover:text-gray-900">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="currentColor" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M15 8a.75.75 0 01-.75.75H4.56l3.22 3.22a.75.75 0 11-1.06 1.06l-4.5-4.5a.75.75 0 010-1.06l4.5-4.5a.75.75 0 111.06 1.06L4.56 7.25H14.25A.75.75 0 0115 8z" clip-rule="evenodd"/>
             </svg>
@@ -84,8 +84,8 @@
             <label class="block text-gray-700">Rol</label>
             <select wire:model="rol" class="w-full px-4 py-2 border rounded-md">
                 <option value="">Seleccionar rol</option>
-                <option value="admin">Admin</option>
-                <option value="user">Usuario</option>
+                <option value="admin">Administrador</option>
+                <option value="user">Cocinero</option>
             </select>
             @error('rol') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>

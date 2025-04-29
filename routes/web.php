@@ -38,7 +38,7 @@ Route::get('/store', function () {
      })->name('store');
 
 // Rutas protegidas por autenticación
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'check.admin'])->group(function () {
 
     // Productos
     Route::get('/productos', ProductComponent::class)

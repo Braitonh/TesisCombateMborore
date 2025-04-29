@@ -24,39 +24,53 @@
             <h2 class="text-xl font-bold mb-5">📊 TailAdmin</h2>
 
             <nav>
-                <ul class="list-none">
+                @php
+                    $rol = auth()->user()->rol;
+                @endphp
 
-                    <x-menu-with-sub-menu 
-                        id="menu-productos" 
-                        icon="fa-solid fa-burger" 
-                        name="Productos" 
-                        :subMenus="[
-                            ['id' => 'productos', 'route' => 'productos.index', 'name' => 'Lista de productos'],
-                        ]"
-                    />
+                <ul class="list-none">
+                    @if ($rol !== 'user')
+                        <x-menu-with-sub-menu 
+                            id="menu-productos" 
+                            icon="fa-solid fa-burger" 
+                            name="Productos" 
+                            :subMenus="[
+                                ['id' => 'productos', 'route' => 'productos.index', 'name' => 'Lista de productos'],
+                            ]"
+                        />
+                        <x-menu-with-sub-menu 
+                            id="menu-pedidos" 
+                            icon="fa-solid fa-cart-shopping"
+                            name="Pedidos" 
+                            :subMenus="[
+                                    ['id' => 'pedidos', 'route' => 'pedidos.index', 'name' => 'Lista de pedidos'],
+                                    ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Detalle de pedidos'],
+                                ]"
+                        />
+                        <x-menu-with-sub-menu 
+                            id="menu-clientes" 
+                            icon="fa-solid fa-users"
+                            name="Clientes" 
+                            :subMenus="[
+                                    ['id' => 'clientes', 'route' => 'clientes.index', 'name' => 'Lista de clientes'],
+                                ]"
+                        />
+                        <x-menu-with-sub-menu 
+                            id="menu-usuarios" 
+                            icon="fa-solid fa-user"
+                            name="Usuarios" 
+                            :subMenus="[
+                                    ['id' => 'usuarios', 'route' => 'usuarios.index', 'name' => 'Lista de usuarios'],
+                                ]"
+                        />
+                    @endif
+     
                     <x-menu-with-sub-menu 
                     id="menu-pedidos" 
                     icon="fa-solid fa-cart-shopping"
                     name="Pedidos" 
                     :subMenus="[
-                            ['id' => 'pedidos', 'route' => 'pedidos.index', 'name' => 'Lista de pedidos'],
                             ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Detalle de pedidos'],
-                        ]"
-                    />
-                    <x-menu-with-sub-menu 
-                    id="menu-usuarios" 
-                    icon="fa-solid fa-user"
-                    name="Usuarios" 
-                    :subMenus="[
-                            ['id' => 'usuarios', 'route' => 'usuarios.index', 'name' => 'Lista de usuarios'],
-                        ]"
-                    />
-                    <x-menu-with-sub-menu 
-                    id="menu-clientes" 
-                    icon="fa-solid fa-users"
-                    name="Clientes" 
-                    :subMenus="[
-                            ['id' => 'clientes', 'route' => 'clientes.index', 'name' => 'Lista de clientes'],
                         ]"
                     />
                 </ul>
