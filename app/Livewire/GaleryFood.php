@@ -125,7 +125,6 @@ class GaleryFood extends Component
                     'email' => $this->email,
                     'telefono' => $this->telefono,
                     'direccion' => $this->direccion,
-                    'password' => 'root'
                 ]);
             }
 

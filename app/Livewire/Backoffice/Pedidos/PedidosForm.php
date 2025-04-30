@@ -71,7 +71,6 @@ class PedidosForm extends Component
                     'email' => $this->email,
                     'telefono' => $this->telefono,
                     'direccion' => $this->direccion,
-                    'password' => 'root'
                 ]);
 
 

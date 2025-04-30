@@ -64,15 +64,18 @@
                                 ]"
                         />
                     @endif
+                    @if ($rol !== 'admin')
+                        <x-menu-with-sub-menu 
+                        id="menu-pedidos" 
+                        icon="fa-solid fa-cart-shopping"
+                        name="Pedidos" 
+                        :subMenus="[
+                                ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Detalle de pedidos'],
+                            ]"
+                        />
+                    @endif
      
-                    <x-menu-with-sub-menu 
-                    id="menu-pedidos" 
-                    icon="fa-solid fa-cart-shopping"
-                    name="Pedidos" 
-                    :subMenus="[
-                            ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Detalle de pedidos'],
-                        ]"
-                    />
+
                 </ul>
             </nav>
             <div class="mt-auto">

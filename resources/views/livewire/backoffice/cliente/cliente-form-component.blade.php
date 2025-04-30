@@ -34,7 +34,7 @@
             <input type="text" wire:model="direccion" class="w-full px-4 py-2 border rounded-md">
             @error('direccion') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
-
+{{-- 
         <div>
             <label class="block text-gray-700">Password</label>
             <div x-data="{ show: false }" class="relative">
@@ -62,8 +62,8 @@
             </div>
             @error('password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
 
-        </div>
-        @unless($cliente)
+        </div> --}}
+        {{-- @unless($cliente)
             <div>
                 <label class="block text-gray-700">Confirmar password</label>
                 <div x-data="{ show: false }" class="relative">
@@ -91,7 +91,7 @@
                 </div>
                 @error('password_confirmation') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
-        @endunless
+        @endunless --}}
 
         <div class="text-right">
             <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">

@@ -31,12 +31,7 @@ class ClienteFormComponent extends Component
             'email' => 'required|email|unique:clientes,email,' . $this->cliente?->id,
             'telefono' => 'required|string',
             'direccion' => 'required|string',
-            'password' => 'required|min:8|confirmed',
         ];
-
-        if ($this->cliente) {
-            $rules['password'] = 'min:8|required';
-        }
 
         return $rules;
     }
@@ -45,10 +40,10 @@ class ClienteFormComponent extends Component
     {
         $this->validate();
         if ($this->cliente) {
-            $this->cliente->update($this->only(['nombre', 'email', 'telefono', 'direccion', 'password']));
+            $this->cliente->update($this->only(['nombre', 'email', 'telefono', 'direccion']));
             session()->flash('success', 'Cliente actualizado correctamente.');
         } else {
-            Cliente::create($this->only(['nombre', 'email', 'telefono', 'direccion', 'password']));
+            Cliente::create($this->only(['nombre', 'email', 'telefono', 'direccion']));
             session()->flash('success', 'Cliente creado correctamente.');
         }
 

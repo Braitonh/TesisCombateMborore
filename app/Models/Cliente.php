@@ -17,7 +17,6 @@ class Cliente extends Model
         'email',
         'telefono',
         'direccion',
-        'password',
     ];
 
     // Relación: Cliente tiene muchos Pedidos
