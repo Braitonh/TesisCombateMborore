@@ -21,8 +21,10 @@
     <div class="flex h-screen">
         <!-- Sidebar fijo -->
         <aside class="w-64 bg-white p-5 flex flex-col sticky top-0 h-screen">
-            <h2 class="text-xl font-bold mb-5">📊 TailAdmin</h2>
-
+            <div class="flex justify-center items-center">
+                <img src="{{ asset('images/fastfood-logo.png') }}" alt="FastFoodApp Logo" class="h-16 w-auto">
+                <h1 class=" font-semibold mb-1 text-center text-blue-600">FastFoodApp</h1>
+            </div>
             <nav>
                 @php
                     $rol = auth()->user()->rol;
@@ -95,7 +97,7 @@
             <nav class="bg-white shadow p-4 flex justify-between items-center">
                 <div class="flex items-center space-x-4">
                     <span class="text-gray-600">
-                        {{ auth()->user()->name }}
+                        Usuario {{ auth()->user()->name }}
                     </span>                
                 </div>
                 <livewire:notification-bell />
