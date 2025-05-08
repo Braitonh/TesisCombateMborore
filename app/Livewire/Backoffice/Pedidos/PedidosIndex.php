@@ -232,7 +232,7 @@ class PedidosIndex extends Component
     {
         $pedidos = Pedido::whereNull('deleted_at')
             ->when($this->buscador, fn($q) =>
-                $q->where('fecha', 'like', '%' . $this->buscador . '%')
+                $q->where('id', 'like', '%' . $this->buscador . '%')
             )
             ->orderBy('id', 'desc') 
             ->paginate(10);

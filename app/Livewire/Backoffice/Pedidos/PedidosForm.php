@@ -87,7 +87,7 @@ class PedidosForm extends Component
                 'cliente_id' => $this->cliente_id,
                 'fecha' => now(),
                 'total' => $this->total,
-                'estado' => 'Iniciado',
+                'estado' => 'Recibido',
                 'iniciado_en' => now()
             ]);
     

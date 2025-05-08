@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Livewire\Backoffice\Cliente\ClienteComponent;
 use App\Livewire\Backoffice\Cliente\ClienteFormComponent;
 use App\Livewire\Backoffice\Pedidos\Detalle;
+use App\Livewire\Backoffice\Pedidos\PedidosEstatus;
 use App\Livewire\Backoffice\Pedidos\PedidosForm;
 use App\Livewire\Backoffice\Pedidos\PedidosIndex;
 use App\Livewire\Backoffice\Product\ProductComponent;
@@ -71,6 +72,8 @@ Route::middleware(['auth', 'check.admin'])->group(function () {
          ->name('pedidos.create');
     Route::get('/pedidos/detalle', Detalle::class)
          ->name('pedidos.detalle');
+     Route::get('/pedidos/estatus', PedidosEstatus::class)
+          ->name('pedidos.estatus');    
 
 });
 

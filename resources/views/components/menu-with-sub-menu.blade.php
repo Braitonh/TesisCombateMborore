@@ -1,49 +1,72 @@
-<li class="rounded-md group hover:bg-gray-200 mt-2">
-    <div class="relative">
-      <!-- Checkbox oculto que controla el estado del collapse -->
-      <input type="checkbox" id="accordion-collapse{{ $id }}" class="hidden peer">
-  
-      <!-- Label que actúa como botón para expandir/colapsar -->
-      <label for="accordion-collapse{{ $id }}" 
-        class="flex items-center p-3 cursor-pointer w-full peer-checked:bg-gray-200 rounded-t-md">
-        <i class="{{ $icon }} text-lg mr-2"></i>
-        {{ $name }}
-        <span class="flex-1"></span>
-        <!-- SVG que rota cuando el checkbox está marcado -->
-        <svg id="svg-{{ $id }}" class="w-4 h-4 transition-transform duration-200 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-        </svg>
-      </label>
-  
-      <!-- Contenedor de los submenús -->
-      <div class="pl-5 space-y-2 hidden peer-checked:block peer-checked:bg-gray-200 rounded-b-md">
-        @foreach ($subMenus as $subMenu)
-          <a id="{{ $subMenu['id'] }}" href="{{ route($subMenu['route']) }}" 
-            class="block p-2 text-gray-700 transition-all rounded-md">
-            {{ $subMenu['name'] }}
-          </a>
-        @endforeach
-      </div>
-    </div>
-  </li>
-  
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Selecciona el checkbox y el SVG usando el ID correspondiente.
-    const checkbox = document.getElementById('accordion-collapse{{ $id }}');
-    const svg = document.getElementById('svg-{{ $id }}');
-    
-    checkbox.addEventListener('change', function() {
-      if (checkbox.checked) {
-        // Si el collapse se expande, rotamos el SVG a 0 grados.
-        svg.classList.remove('rotate-180');
-        svg.classList.add('rotate-0');
-      } else {
-        // Si se colapsa, rotamos el SVG a 180 grados.
-        svg.classList.remove('rotate-0');
-        svg.classList.add('rotate-180');
+@props([
+  'id', 
+  'icon', 
+  'name', 
+  'subMenus', 
+  // Nuevo prop: rutas adicionales a tratar como activas
+  'extraRoutes' => [],
+  // También podrías aceptar patrones, ej. 'productos.*'
+  'extraPatterns' => [],
+])
+
+@php
+  // 1) Rutas definidas en subMenus
+  $routes = collect($subMenus)->pluck('route')->toArray();
+  // 2) Añadimos las extra
+  $routes = array_merge($routes, (array) $extraRoutes);
+
+  // Comprobación de patrones (opcional)
+  $isPatternMatch = false;
+  foreach ((array) $extraPatterns as $pattern) {
+      if (request()->routeIs($pattern)) {
+          $isPatternMatch = true;
+          break;
       }
-    });
-  });
-  </script>
-  
+  }
+
+  // Finalmente, vemos si la ruta actual coincide
+  $isActive = collect($routes)->contains(fn($r) => request()->routeIs($r)) 
+              || $isPatternMatch;
+@endphp
+
+<li class="mt-2">
+  <div x-data="{ open: @json($isActive) }" class="rounded-md overflow-hidden">
+    <button
+      @click="open = !open"
+      :class="open 
+        ? 'bg-orange-500 text-white' 
+        : 'bg-white text-gray-500 hover:bg-orange-500 hover:text-white'"
+      class="w-full flex items-center px-2 py-2 transition-colors"
+    >
+      <i class="{{ $icon }} text-lg mr-3"></i>
+      <span class="font-medium">{{ $name }}</span>
+      <span class="flex-1"></span>
+      <svg
+        :class="open ? 'rotate-0' : 'rotate-180'"
+        class="w-4 h-4 transform transition-transform duration-200"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+
+    <ul x-show="open" x-collapse class="">
+      @foreach ($subMenus as $sub)
+        <li>
+          <a
+            href="{{ route($sub['route']) }}"
+            class="block px-6 py-2 text-xs transition-colors
+                   {{ request()->routeIs($sub['route'])
+                       ? 'font-semibold text-orange-500 bg-white'
+                       : 'text-gray-700 hover:text-orange-500 hover:bg-white' }}"
+          >
+            - {{ $sub['name'] }}
+          </a>
+        </li>
+      @endforeach
+    </ul>
+  </div>
+</li>

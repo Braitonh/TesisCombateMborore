@@ -17,14 +17,23 @@
 
         <title>{{ $title ?? 'Page Title' }}</title>
     </head>
-<body class="bg-gray-100">
-    <div class="flex h-screen">
-        <!-- Sidebar fijo -->
-        <aside class="w-64 bg-white p-5 flex flex-col sticky top-0 h-screen">
-            <div class="flex justify-center items-center">
-                <img src="{{ asset('images/fastfood-logo.png') }}" alt="FastFoodApp Logo" class="h-16 w-auto">
-                <h1 class=" font-semibold mb-1 text-center text-blue-600">FastFoodApp</h1>
-            </div>
+    <body class="">
+    {{-- HEADER FIJO ARRIBA --}}
+    <header class="bg-orange-600 px-6 py-10 flex items-center justify-between -mt-5">
+        <div class="flex items-center  ">
+            <img src="{{ asset('images/logo.png') }}" alt="FastFoodApp Logo" class="h-16 w-auto rounded-full mr-2">
+            <span class="text-white">Usuario: {{ auth()->user()->name }}</span>
+        </div>
+
+        <livewire:notification-bell />
+
+    </header>
+
+    {{-- CONTENIDO PRINCIPAL: SIDEBAR + MAIN --}}
+    <div class="relative -mt-8 z-20 flex flex-1 overflow-hidden rounded-t-[2rem] bg-white">
+        {{-- SIDEBAR --}}
+        <aside class="w-64 border-r-2 p-5 flex flex-col sticky top-0 h-screen ">
+
             <nav>
                 @php
                     $rol = auth()->user()->rol;
@@ -39,6 +48,7 @@
                             :subMenus="[
                                 ['id' => 'productos', 'route' => 'productos.index', 'name' => 'Lista de productos'],
                             ]"
+                            :extraPatterns="['productos.*']"
                         />
                         <x-menu-with-sub-menu 
                             id="menu-pedidos" 
@@ -47,7 +57,10 @@
                             :subMenus="[
                                     ['id' => 'pedidos', 'route' => 'pedidos.index', 'name' => 'Lista de pedidos'],
                                     ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Detalle de pedidos'],
+                                    ['id' => 'estatus', 'route' => 'pedidos.estatus', 'name' => 'Estatus de pedidos'],
                                 ]"
+                            :extraPatterns="['pedidos.*']"
+
                         />
                         <x-menu-with-sub-menu 
                             id="menu-clientes" 
@@ -76,12 +89,12 @@
                             ]"
                         />
                     @endif
-     
+        
 
                 </ul>
             </nav>
             <div class="mt-auto">
-                <form action="{{ route('logout') }}" method="POST" class="w-full">
+                <form action="{{ route('logout') }}" method="POST" class="w-full ">
                     @csrf
                     <button type="submit"
                             class="block w-full py-2 px-4 mt-5 bg-red-600 text-center rounded text-white hover:bg-red-700 transition">
@@ -90,33 +103,19 @@
                 </form>
             </div>
         </aside>
-        
-        <!-- Contenido desplazable -->
-        <div class="flex-1 flex flex-col overflow-y-auto">
-            <!-- Navbar -->
-            <nav class="bg-white shadow p-4 flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-600">
-                        Usuario {{ auth()->user()->name }}
-                    </span>                
-                </div>
-                <livewire:notification-bell />
-            </nav>
 
-            <!-- Contenido principal con desplazamiento -->
-            <main class="p-4">
-                {{ $slot }}
-            </main>
-
-        </div>
+        {{-- ÁREA DE CONTENIDO --}}
+        <main class="flex-1 overflow-y-auto p-6">
+        {{ $slot }}
+        </main>
     </div>
 
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.1/echo.iife.js"></script>
-    
+
     <script>
         window.Pusher = Pusher;
-    
+
         window.Echo = new Echo({
             broadcaster: 'pusher',
             key: "app-key", // 👈 valor literal
@@ -135,7 +134,7 @@
                 Livewire.dispatch('echo:orders,order.created', e); // ⬅️ reenvía a Livewire
             });
     </script>
-</body>
+    </body>
 </html>
 
 <script>

@@ -14,7 +14,7 @@
             <div class="mb-4">
                     <h2 class="text-xl font-bold text-gray-800 mb-2">Pedido #{{ $pedido->id }}</h2>
                     <p class="text-sm text-gray-600">Cliente: <span class="font-medium text-gray-800">{{ $pedido->cliente->nombre }}</span></p>
-                    <p class="text-sm text-gray-600">Hora del pedido: {{ \Carbon\Carbon::parse($pedido->fecha)->format('H:i:s') }}</p>
+                    <p class="text-sm text-gray-600">Hora del pedido: {{ \Carbon\Carbon::parse($pedido->updated_at)->format('H:i:s') }}</p>
                     <p class="text-sm text-gray-600">Estado: {{ $pedido->estado }}</p>
                     <p class="text-sm text-gray-600">Total: ${{ number_format($pedido->total, 2) }}</p>
                 </div>
