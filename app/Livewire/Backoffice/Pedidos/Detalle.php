@@ -18,7 +18,7 @@ class Detalle extends Component
     public function cargarPedidos()
     {
         $this->pedidos = Pedido::with(['cliente', 'productos'])
-            ->where('estado', 'Iniciado')
+            ->where('estado', 'Elaboracion')
             ->whereDate('fecha', today())
             ->orderBy('id', 'desc')
             ->get();
@@ -35,7 +35,7 @@ class Detalle extends Component
     public function completarPedido($pedidoId)
     {
         $pedido = Pedido::findOrFail($pedidoId);
-        $pedido->estado = "completado";
+        $pedido->estado = "Delivery";
         $pedido->save();
         $this->cargarPedidos();
 

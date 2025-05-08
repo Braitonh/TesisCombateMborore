@@ -1,5 +1,5 @@
 <div
-    class="relative bg-gray-50 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer"
+    class="relative bg-gray-50 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer "
     @if($count >= 1) wire:click="viewNotification" @endif
     >
 

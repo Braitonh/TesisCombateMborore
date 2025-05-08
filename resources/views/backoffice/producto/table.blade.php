@@ -28,7 +28,7 @@
                                     <label class="flex items-center cursor-pointer">
                                         <div class="relative">
                                             <input type="checkbox" wire:change="toggleActivo({{ $producto->id }})" {{ $producto->activo ? 'checked' : '' }} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 transition-colors"></div>
+                                            <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-orange-500 transition-colors"></div>
                                             <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md peer-checked:translate-x-full transition-transform"></div>
                                         </div>
                                     </label>
@@ -59,7 +59,7 @@
         <div class="flex justify-center mt-4">
             {{ $productos->links('pagination::custom') }}
         </div>
-        <div wire:loading wire:target="actualizarOrden" >
+        <div wire:loading  >
             <x-spinner />
         </div>
 
