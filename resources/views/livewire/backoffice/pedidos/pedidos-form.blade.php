@@ -132,13 +132,38 @@
                         <h2 class="text-lg font-semibold mb-4">Resumen de compra</h2>
     
                         <hr class="my-2" />
-    
+
+                        <div class="mb-4">
+                            <label for="repartidor_id" class="block text-gray-700 font-medium mb-1">Asignar repartidor</label>
+                            <select wire:model.live="repartidor_id" id="repartidor_id" class="w-full px-4 py-2 border rounded-md">
+                                <option value="">-- Selecciona un repartidor --</option>
+                                @foreach ($repartidores as $repartidor)
+                                    <option value="{{ $repartidor->id }}">{{ $repartidor->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('repartidor_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="envio" class="block text-gray-700 font-medium mb-1">Valor del envío</label>
+                            <input
+                                type="number"
+                                id="envio"
+                                wire:model.live="envio"
+                                min="0"
+                                placeholder="0.00"
+                                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                @disabled(!$repartidor_id)
+                                />
+                            @error('envio')
+                              <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         <div class="flex justify-between font-bold text-lg mb-4">
                             <span>Total</span>
-                            <span>
-                                Total: ${{ number_format($this->total, 0, ',', '.') }}
-                            </span>
-                        </div>
+                            <span>${{ number_format($this->total, 0, ',', '.') }}</span>
+                          </div>
 
                         @error('cliente')
                             <div class="mb-4 bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded">

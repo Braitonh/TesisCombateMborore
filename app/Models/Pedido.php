@@ -15,10 +15,12 @@ class Pedido extends Model
 
     protected $fillable = [
         'cliente_id',
+        'repartidor_id', 
         'fecha',
         'estado',
         'total',
-        'iniciado_en'
+        'iniciado_en',
+        'tipo'
     ];
 
     public function getTiempoEstadoAttribute()
@@ -48,5 +50,25 @@ class Pedido extends Model
                     ->withTimestamps()
                     ->orderBy('productos.id'); // o 'productos.id' si preferís por ID
 
+    }
+
+    protected static function booted()
+    {
+        static::updating(function ($pedido) {
+            if ($pedido->isDirty('estado')) {
+                \App\Models\EstadoPedidoLog::create([
+                    'pedido_id'       => $pedido->id,
+                    'estado_anterior' => $pedido->getOriginal('estado'),
+                    'estado_nuevo'    => $pedido->estado,
+                    'cambiado_en'     => now(),
+                ]);
+            }
+        });
+    }
+
+
+    public function repartidor()
+    {
+        return $this->belongsTo(User::class, 'repartidor_id');
     }
 }

@@ -76,6 +76,8 @@
                             name="Usuarios" 
                             :subMenus="[
                                     ['id' => 'usuarios', 'route' => 'usuarios.index', 'name' => 'Lista de usuarios'],
+                                    ['id' => 'notificaciones', 'route' => 'usuarios.notificaciones', 'name' => 'Notificaciones'],
+
                                 ]"
                         />
                     @endif
@@ -132,6 +134,14 @@
             .listen('.order.created', (e) => {
                 console.log('[Echo] Evento recibido en JS:', e);
                 Livewire.dispatch('echo:orders,order.created', e); // ⬅️ reenvía a Livewire
+            });
+    </script>
+    <script>
+        Echo.channel('notificaciones')
+            .listen('.pedido.actualizado', (e) => {
+                Livewire.dispatch('pedidoActualizado', {
+                    pedido:   e,
+                });
             });
     </script>
     </body>

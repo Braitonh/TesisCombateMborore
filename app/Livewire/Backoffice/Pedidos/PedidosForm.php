@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Backoffice\Pedidos;
 
+use App\Events\NotificacionEstados;
 use App\Events\OrderCreated;
 use App\Models\Cliente;
 use App\Models\Pedido;
 use App\Models\Producto;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
@@ -32,12 +34,27 @@ class PedidosForm extends Component
 
     public array $cantidades = [];
 
+    public float $subtotal = 0;
+
+    public float $envio;
+
+    public $repartidores;
+    public ?int $repartidor_id = null;
+
+
     //Cliente
     public ?string $nombre = null;
     public ?string $email = null;
     public ?string $telefono = null;
     public ?string $direccion = null;
     public ?bool $clienteEncontrado = null;
+
+
+    public function mount()
+    {
+        $this->envio = 0;
+        $this->repartidores = User::where('rol', 'Repartidor')->get();
+    }
 
     public function savePedido()
     {
@@ -52,13 +69,13 @@ class PedidosForm extends Component
             $this->addError('cliente', 'Debe seleccionar un cliente o ingresar los datos para crear uno nuevo.');
             return;
         }
-    
+
         DB::beginTransaction();
-    
+
         try {
-            // Crear cliente si no se encontró y se escribieron datos
+
             if (!$this->cliente && $hayDatosCliente) {
-                
+
                 $this->validate([
                     'nombre' => 'required|string|max:255',
                     'email' => 'required|email|unique:clientes,email,',
@@ -73,22 +90,22 @@ class PedidosForm extends Component
                     'direccion' => $this->direccion,
                 ]);
 
-
-    
                 $this->cliente_id = $cliente->id;
                 $this->cliente = $cliente;
                 $this->clienteEncontrado = true;
             }
 
-            
 
-    
+            // dd($this->repartidor_id);
+
             $pedido = Pedido::create([
-                'cliente_id' => $this->cliente_id,
-                'fecha' => now(),
-                'total' => $this->total,
-                'estado' => 'Recibido',
-                'iniciado_en' => now()
+                'cliente_id'     => $this->cliente_id,
+                'repartidor_id'  => $this->repartidor_id,    
+                'total'          => $this->total + $this->envio,
+                'estado'         => 'Recibido',
+                'iniciado_en'    => now(),
+                'fecha'          => now(),
+                'tipo'           => $this->envio > 0 ? 'Con envío' : 'Sin envío',
             ]);
     
             foreach ($this->shoppingCart as $producto) {
@@ -115,12 +132,20 @@ class PedidosForm extends Component
             $this->reset(['shoppingCart', 'cantidades', 'showModal', 'cliente', 'buscador', 'nombre', 'email', 'telefono', 'direccion', 'clienteEncontrado']);
             session()->flash('success', 'Pedido guardado exitosamente. Ticket generado.');
             
+            $pedido->updated(['estado' => 'Recibido' ]);
             event(new OrderCreated($pedido->toArray()));
+            event(new NotificacionEstados($pedido));
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
+            dd([
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
             report($e);
             $this->addError('pedido', 'Error: ' . $e->getMessage());
         }
@@ -200,7 +225,11 @@ class PedidosForm extends Component
 
     public function getTotalProperty()
     {
-        return collect($this->shoppingCart)->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
+        $cartTotal = collect($this->shoppingCart)
+            ->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
+    
+        // Si $this->envio es null, lo tratamos como 0
+        return $cartTotal + ($this->envio ?? 0);
     }
 
     public function toggleCartModal(): void

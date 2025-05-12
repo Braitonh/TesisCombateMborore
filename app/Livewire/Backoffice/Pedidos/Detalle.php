@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backoffice\Pedidos;
 
+use App\Events\NotificacionEstados;
 use App\Models\Pedido;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -35,10 +36,10 @@ class Detalle extends Component
     public function completarPedido($pedidoId)
     {
         $pedido = Pedido::findOrFail($pedidoId);
-        $pedido->estado = "Delivery";
-        $pedido->save();
-        $this->cargarPedidos();
+        $pedido->update(['estado' => $pedido->tipo == 'Con envío' ? 'Delivery' : 'Completado']);
+        event(new NotificacionEstados($pedido));
 
+        $this->cargarPedidos();
     }
 
 

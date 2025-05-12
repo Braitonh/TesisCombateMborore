@@ -9,6 +9,7 @@ use App\Livewire\Backoffice\Pedidos\PedidosForm;
 use App\Livewire\Backoffice\Pedidos\PedidosIndex;
 use App\Livewire\Backoffice\Product\ProductComponent;
 use App\Livewire\Backoffice\Product\ProductFormComponent;
+use App\Livewire\Backoffice\Users\NotificacionsList;
 use App\Livewire\Backoffice\Users\UsersComponent;
 use App\Livewire\Backoffice\Users\UsersFormComponent;
 use App\Livewire\GaleryFood;
@@ -56,6 +57,8 @@ Route::middleware(['auth', 'check.admin'])->group(function () {
          ->name('usuarios.create');
     Route::get('/usuarios/{userId}/edit', UsersFormComponent::class)
          ->name('usuarios.edit');
+     Route::get('/usuarios/notificaciones', NotificacionsList::class)
+          ->name('usuarios.notificaciones');
 
     // Clientes
     Route::get('/clientes', ClienteComponent::class)

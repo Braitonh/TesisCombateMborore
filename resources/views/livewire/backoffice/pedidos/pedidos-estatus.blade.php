@@ -4,7 +4,7 @@
     <div class="w-1/3 bg-white rounded shadow p-4">
       {{-- Tabs --}}
       <div class="flex mb-4 border-b bg-gray-100 rounded-lg">
-        @foreach(['Recibido'=>'Recibido','Elaboracion'=>'En elaboracion','Delivery'=>'En delivery'] as $key => $label)
+        @foreach(['Recibido'=>'Recibido','Elaboracion'=>'Elaboracion','Delivery'=>'Delivery', 'Completado' => 'Completado'] as $key => $label)
           <button
             wire:click="setStatus('{{ $key }}')"
             class="rounded-lg flex-1 py-2 text-center 

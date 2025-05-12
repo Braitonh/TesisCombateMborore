@@ -34,7 +34,6 @@ class OrderCreated implements ShouldBroadcastNow
         return ['order' => $this->order];
     }
 
-    // Nombre del evento en JS (por defecto será "OrderCreated")
     public function broadcastAs(): string
     {
         return 'order.created';

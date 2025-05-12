@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backoffice\Pedidos;
 
+use App\Events\NotificacionEstados;
 use App\Models\Pedido;
 use Livewire\Component;
 
@@ -48,6 +49,7 @@ class PedidosEstatus extends Component
         if ($order = $this->selectedOrder) {
             $order->update(['estado' => 'Elaboracion']);
             $this->setStatus('Elaboracion');
+            event(new NotificacionEstados($order));
         }
     }
 

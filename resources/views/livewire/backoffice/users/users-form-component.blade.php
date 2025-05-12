@@ -84,8 +84,9 @@
             <label class="block text-gray-700">Rol</label>
             <select wire:model="rol" class="w-full px-4 py-2 border rounded-md">
                 <option value="">Seleccionar rol</option>
-                <option value="admin">Administrador</option>
-                <option value="user">Cocinero</option>
+                <option value="Cajero">Cajero</option>
+                <option value="Cocinero">Cocinero</option>
+                <option value="Repartidor">Repartidor</option>
             </select>
             @error('rol') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
