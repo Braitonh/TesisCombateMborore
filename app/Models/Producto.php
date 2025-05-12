@@ -12,14 +12,14 @@ class Producto extends Model
 
     use SoftDeletes;
 
-    
     protected $fillable = [
         'nombre',
         'descripcion',
         'precio',
         'activo',
         'imagen',
-        'categoria'
+        'categoria',
+        'posicion'
     ];
 
     // Relación: Un producto puede estar en muchos pedidos

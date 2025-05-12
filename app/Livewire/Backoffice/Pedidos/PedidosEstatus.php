@@ -3,6 +3,7 @@
 namespace App\Livewire\Backoffice\Pedidos;
 
 use App\Events\NotificacionEstados;
+use App\Events\OrderCreated;
 use App\Models\Pedido;
 use Livewire\Component;
 
@@ -47,10 +48,31 @@ class PedidosEstatus extends Component
     public function acceptOrder()
     {
         if ($order = $this->selectedOrder) {
-            $order->update(['estado' => 'Elaboracion']);
+            $order->update(['estado' => 'Elaboracion', 'iniciado_en' => now()]);
             $this->setStatus('Elaboracion');
+            event(new OrderCreated($order));
             event(new NotificacionEstados($order));
         }
+    }
+
+    public function getSubtotalProperty()
+    {
+        if (! $this->selectedOrder) {
+            return 0;
+        }
+        return $this->selectedOrder->productos
+            ->sum(fn($item) => $item->pivot->subtotal);
+    }
+
+    /**
+     * El envío es total menos subtotal
+     */
+    public function getEnvioProperty()
+    {
+        if (! $this->selectedOrder) {
+            return 0;
+        }
+        return $this->selectedOrder->total - $this->subtotal;
     }
 
     public function render()

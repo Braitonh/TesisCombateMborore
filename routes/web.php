@@ -76,7 +76,10 @@ Route::middleware(['auth', 'check.admin'])->group(function () {
     Route::get('/pedidos/detalle', Detalle::class)
          ->name('pedidos.detalle');
      Route::get('/pedidos/estatus', PedidosEstatus::class)
-          ->name('pedidos.estatus');    
+          ->name('pedidos.estatus');
+//    // Delivery
+    Route::get('/delivery', \App\Livewire\Backoffice\Delivery\Delivery::class)
+        ->name('delivery.index');
 
 });
 

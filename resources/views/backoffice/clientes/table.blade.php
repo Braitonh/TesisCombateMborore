@@ -19,7 +19,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $cliente->telefono }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $cliente->direccion }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <div class="flex items-center justify-center space-x-3">
+                            <div class="flex items-center space-x-3">
 
                                 <!-- Botón Editar -->
                                 <a href="{{ route('clientes.edit', $cliente->id) }}" 

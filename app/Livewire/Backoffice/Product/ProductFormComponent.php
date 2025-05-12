@@ -23,7 +23,7 @@ class ProductFormComponent extends Component
     public float $precio = 0;
 
     #[Rule('required')]   
-    public string $categoria = '';
+    public string $categoria = 'pizzas';
 
     #[Rule('boolean')]
     public bool $activo = false;
@@ -54,6 +54,10 @@ class ProductFormComponent extends Component
             $this->producto->update($data);
             session()->flash('success', 'Producto actualizado correctamente.');
         } else {
+            $ultimaPosicion = Producto::max('posicion') ?? 0;
+            $data['posicion'] = $ultimaPosicion + 1;
+
+
             Producto::create($data);
             session()->flash('success', 'Producto creado correctamente.');
         }

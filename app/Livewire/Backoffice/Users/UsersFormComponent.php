@@ -5,15 +5,20 @@ namespace App\Livewire\Backoffice\Users;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class UsersFormComponent extends Component
 {
+    use WithFileUploads;              // ← usar trait
+
     public string $name = '';
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
     public string $rol = '';
     public ?User $usuario = null;
+    public $avatar;                     // ← propiedad para el archivo
+
 
     public function mount(?int $userId = null): void
     {
@@ -34,18 +39,26 @@ class UsersFormComponent extends Component
             ],
             'rol' => 'required',
             'password' => 'required|min:8|confirmed',
+            'avatar'   => 'nullable|image|max:1024',  // ← valida JPG/PNG hasta 1MB
+
         ];
 
         if ($this->usuario) {
             $rules['password'] = 'min:8|required';
         }
-    
+
         return $rules;
     }
 
     public function save()
     {
         $data = $this->validate();
+
+        // Si el usuario sube un avatar, lo guardamos en public/avatars
+        if ($this->avatar) {
+            $path = $this->avatar->store('public/avatars');
+            $data['avatar'] = str_replace('public/', 'storage/', $path);
+        }
 
         if ($this->usuario) {
             $this->usuario->update($data);
@@ -57,9 +70,9 @@ class UsersFormComponent extends Component
 
         sleep(1);
         return redirect()->route('usuarios.index');
-    }       
-    
-    
+    }
+
+
 
     public function render()
     {

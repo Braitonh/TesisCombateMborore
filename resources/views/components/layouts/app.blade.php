@@ -4,11 +4,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.tailwindcss.com"></script>
-        
+
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-        
+
         <style>
             body {
                 font-family: 'Poppins', sans-serif;
@@ -41,57 +41,68 @@
 
                 <ul class="list-none">
                     @if ($rol !== 'user')
-                        <x-menu-with-sub-menu 
-                            id="menu-productos" 
-                            icon="fa-solid fa-burger" 
-                            name="Productos" 
+                        <x-menu-with-sub-menu
+                            id="menu-productos"
+                            icon="fa-solid fa-burger"
+                            name="Productos"
                             :subMenus="[
                                 ['id' => 'productos', 'route' => 'productos.index', 'name' => 'Lista de productos'],
                             ]"
                             :extraPatterns="['productos.*']"
                         />
-                        <x-menu-with-sub-menu 
-                            id="menu-pedidos" 
+                        <x-menu-with-sub-menu
+                            id="menu-pedidos"
                             icon="fa-solid fa-cart-shopping"
-                            name="Pedidos" 
+                            name="Pedidos"
                             :subMenus="[
                                     ['id' => 'pedidos', 'route' => 'pedidos.index', 'name' => 'Lista de pedidos'],
+                                    ['id' => 'crear', 'route' => 'pedidos.create', 'name' => 'Crear pedidos'],
                                     ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Detalle de pedidos'],
                                     ['id' => 'estatus', 'route' => 'pedidos.estatus', 'name' => 'Estatus de pedidos'],
                                 ]"
                             :extraPatterns="['pedidos.*']"
 
                         />
-                        <x-menu-with-sub-menu 
-                            id="menu-clientes" 
+                        <x-menu-with-sub-menu
+                            id="menu-clientes"
                             icon="fa-solid fa-users"
-                            name="Clientes" 
+                            name="Clientes"
                             :subMenus="[
                                     ['id' => 'clientes', 'route' => 'clientes.index', 'name' => 'Lista de clientes'],
                                 ]"
                         />
-                        <x-menu-with-sub-menu 
-                            id="menu-usuarios" 
+                        <x-menu-with-sub-menu
+                            id="menu-usuarios"
                             icon="fa-solid fa-user"
-                            name="Usuarios" 
+                            name="Usuarios"
                             :subMenus="[
                                     ['id' => 'usuarios', 'route' => 'usuarios.index', 'name' => 'Lista de usuarios'],
                                     ['id' => 'notificaciones', 'route' => 'usuarios.notificaciones', 'name' => 'Notificaciones'],
 
                                 ]"
                         />
+                        <x-menu-with-sub-menu
+                            id="menu-delivery"
+                            icon="fa-solid fa-motorcycle"
+                            name="delivery"
+                            :subMenus="[
+                                    ['id' => 'delivery', 'route' => 'delivery.index', 'name' => 'Pedidos'],
+                                ]"
+                            :extraPatterns="['delivery.*']"
+
+                        />
                     @endif
                     @if ($rol !== 'admin')
-                        <x-menu-with-sub-menu 
-                        id="menu-pedidos" 
+                        <x-menu-with-sub-menu
+                        id="menu-pedidos"
                         icon="fa-solid fa-cart-shopping"
-                        name="Pedidos" 
+                        name="Pedidos"
                         :subMenus="[
                                 ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Detalle de pedidos'],
                             ]"
                         />
                     @endif
-        
+
 
                 </ul>
             </nav>

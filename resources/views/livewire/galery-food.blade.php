@@ -1,39 +1,39 @@
 <div class="bg-gray-100 min-h-screen">
     <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-  
+
       <!-- Sección principal -->
       <div class="lg:col-span-2 space-y-8">
-  
+
         <!-- Banner Promocional -->
         <div class="bg-cover bg-center rounded-lg p-8" style="background-image: url('{{ asset('images/banner.png') }}');">
           <h2 class="text-3xl font-bold text-white">Promoción del Mes</h2>
           <p class="text-white">¡Disfruta de descuentos exclusivos!</p>
           <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded">Ordenar ahora</button>
         </div>
-  
+
         <!-- Categorías -->
         <div>
           <h3 class="font-semibold text-xl mb-4">Categorías</h3>
           <div class="flex gap-4">
             <!-- Pizzas -->
-            <button wire:click="$set('filtroCategoria', 'pizzas')" 
-                class="flex flex-col items-center rounded-lg shadow-md p-4 hover:shadow-xl 
+            <button wire:click="$set('filtroCategoria', 'pizzas')"
+                class="flex flex-col items-center rounded-lg shadow-md p-4 hover:shadow-xl
                 {{ $filtroCategoria === 'pizzas' ? 'ring-2 ring-red-400' : 'bg-white' }}">
                 <img src="{{ asset('images/icono_pizza.svg') }}" class="h-10 mb-2">
                 Pizzas
             </button>
-        
+
             <!-- Hamburguesas -->
-            <button wire:click="$set('filtroCategoria', 'hamburguesas')" 
-                class="flex flex-col items-center rounded-lg shadow-md p-4 hover:shadow-xl 
+            <button wire:click="$set('filtroCategoria', 'hamburguesas')"
+                class="flex flex-col items-center rounded-lg shadow-md p-4 hover:shadow-xl
                 {{ $filtroCategoria === 'hamburguesas' ? ' ring-2 ring-red-400' : 'bg-white' }}">
                 <img src="{{ asset('images/icono_hamburguesa.svg') }}" class="h-10 mb-2">
                 Hamburguesas
             </button>
-        
+
             <!-- Bebidas -->
-            <button wire:click="$set('filtroCategoria', 'bebidas')" 
-                class="flex flex-col items-center rounded-lg shadow-md p-4 hover:shadow-xl 
+            <button wire:click="$set('filtroCategoria', 'bebidas')"
+                class="flex flex-col items-center rounded-lg shadow-md p-4 hover:shadow-xl
                 {{ $filtroCategoria === 'bebidas' ? 'ring-2 ring-red-400' : 'bg-white' }}">
                 <img src="{{ asset('images/icono_cafe.svg') }}" class="h-10 mb-2">
                 Bebidas
@@ -47,9 +47,9 @@
                 </a>
             </div>
           @endif
-  
+
         </div>
-  
+
         <!-- Tarjetas de Productos -->
         <div>
             <div class="flex justify-between items-center mb-4">
@@ -131,7 +131,7 @@
         <div class="bg-cover bg-center rounded-lg p-8 h-[500px] flex flex-col justify-between" style="background-image: url('{{ asset('images/banner2.png') }}');">
           <h2 class="text-3xl font-bold text-white">Explora nuevos sabores</h2>
         </div>
-      
+
       </div>
 
       @if ($showModal && !empty($shoppingCart))
@@ -146,7 +146,7 @@
         </div>
     </footer>
   </div>
-  
+
   <script>
     window.addEventListener('hide-success-alert', () => {
         setTimeout(() => {

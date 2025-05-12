@@ -10,6 +10,7 @@ use App\Models\Producto;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -29,14 +30,14 @@ class PedidosForm extends Component
     public bool $showAddProductModal = false;
 
     public bool $showSuccessAlert  = false;
-    
+
     public array $shoppingCart = [];
 
     public array $cantidades = [];
 
     public float $subtotal = 0;
 
-    public float $envio;
+    public ?float $envio = 0;
 
     public $repartidores;
     public ?int $repartidor_id = null;
@@ -52,7 +53,6 @@ class PedidosForm extends Component
 
     public function mount()
     {
-        $this->envio = 0;
         $this->repartidores = User::where('rol', 'Repartidor')->get();
     }
 
@@ -62,7 +62,7 @@ class PedidosForm extends Component
             $this->addError('carrito', 'El carrito está vacío.');
             return;
         }
-    
+
         $hayDatosCliente = $this->nombre || $this->email || $this->telefono || $this->direccion;
 
         if (!$hayDatosCliente) {
@@ -95,43 +95,39 @@ class PedidosForm extends Component
                 $this->clienteEncontrado = true;
             }
 
-
-            // dd($this->repartidor_id);
-
             $pedido = Pedido::create([
                 'cliente_id'     => $this->cliente_id,
-                'repartidor_id'  => $this->repartidor_id,    
-                'total'          => $this->total + $this->envio,
+                'repartidor_id'  => $this->repartidor_id,
+                'total'          => $this->total,
                 'estado'         => 'Recibido',
-                'iniciado_en'    => now(),
                 'fecha'          => now(),
                 'tipo'           => $this->envio > 0 ? 'Con envío' : 'Sin envío',
             ]);
-    
+
             foreach ($this->shoppingCart as $producto) {
                 $cantidad = $this->cantidades[$producto->id] ?? 1;
                 $precioUnitario = $producto->precio;
                 $subtotal = $precioUnitario * $cantidad;
-    
+
                 $pedido->productos()->attach($producto->id, [
                     'cantidad' => $cantidad,
                     'precio_unitario' => $precioUnitario,
                     'subtotal' => $subtotal,
                 ]);
             }
-    
+
             DB::commit();
-    
+
             // Generar PDF del ticket
-            $pedido->load('cliente', 'productos');
-            $pdf = Pdf::loadView('tickets.pedido', ['pedido' => $pedido]);
-            $pdfPath = storage_path("app/public/tickets/pedido_{$pedido->id}.pdf");
-            $pdf->save($pdfPath);
-    
+//            $pedido->load('cliente', 'productos');
+//            $pdf = Pdf::loadView('tickets.pedido', ['pedido' => $pedido]);
+//            $pdfPath = storage_path("app/public/tickets/pedido_{$pedido->id}.pdf");
+//            $pdf->save($pdfPath);
+
             session()->flash('ticket_path', asset("storage/tickets/pedido_{$pedido->id}.pdf"));
             $this->reset(['shoppingCart', 'cantidades', 'showModal', 'cliente', 'buscador', 'nombre', 'email', 'telefono', 'direccion', 'clienteEncontrado']);
             session()->flash('success', 'Pedido guardado exitosamente. Ticket generado.');
-            
+
             $pedido->updated(['estado' => 'Recibido' ]);
             event(new OrderCreated($pedido->toArray()));
             event(new NotificacionEstados($pedido));
@@ -150,9 +146,9 @@ class PedidosForm extends Component
             $this->addError('pedido', 'Error: ' . $e->getMessage());
         }
     }
-    
 
-    public function buscarCliente() 
+
+    public function buscarCliente()
     {
         $this->cliente = Cliente::whereNull('deleted_at')
         ->where('telefono', $this->buscador)
@@ -200,14 +196,14 @@ class PedidosForm extends Component
 
     public function closeModelKeppBuying()
     {
-        $this->showAddProductModal = false;        
+        $this->showAddProductModal = false;
     }
 
     public function openModalShoppingCart()
     {
-        $this->showAddProductModal = false;      
+        $this->showAddProductModal = false;
         $this->showModal = !$this->showModal;
-         
+
     }
 
 
@@ -227,9 +223,15 @@ class PedidosForm extends Component
     {
         $cartTotal = collect($this->shoppingCart)
             ->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
-    
-        // Si $this->envio es null, lo tratamos como 0
+
         return $cartTotal + ($this->envio ?? 0);
+    }
+    public function getSubTotalProperty()
+    {
+        return  collect($this->shoppingCart)
+            ->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
+
+
     }
 
     public function toggleCartModal(): void
@@ -247,7 +249,7 @@ class PedidosForm extends Component
     {
         unset($this->cantidades[$id]);
         unset($this->shoppingCart[$id]);
-        
+
         if(empty($this->cantidades) && empty($this->shoppingCart)){
             $this->toggleCartModal();
         }
@@ -276,7 +278,7 @@ class PedidosForm extends Component
             ->get();
 
         // $clientes = Cliente::orderBy('nombre')->get();
-    
+
         return view('livewire.backoffice.pedidos.pedidos-form', compact('productos'));
     }
 }

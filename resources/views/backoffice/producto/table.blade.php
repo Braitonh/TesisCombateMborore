@@ -23,7 +23,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $producto->stock }}</td>
 
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <div class="flex items-center justify-center space-x-3">
+                                <div class="flex items-center space-x-3">
                                     <!-- Toggle Activar/Desactivar -->
                                     <label class="flex items-center cursor-pointer">
                                         <div class="relative">

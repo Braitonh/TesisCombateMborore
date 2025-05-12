@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('descripcion');
             $table->integer('precio');
             $table->integer('stock');
+            $table->integer('posicion');
             $table->boolean('activo')->default(true);
             $table->timestamps();
         });

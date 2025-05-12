@@ -25,8 +25,8 @@
         <div>
             <label class="block text-gray-700">Password</label>
             <div x-data="{ show: false }" class="relative">
-                <input 
-                    :type="show ? 'text' : 'password'" 
+                <input
+                    :type="show ? 'text' : 'password'"
                     wire:model="password"
                     class="w-full px-4 py-2 border rounded-md pr-10"
                 >
@@ -54,8 +54,8 @@
             <div>
                 <label class="block text-gray-700">Confirmar password</label>
                 <div x-data="{ show: false }" class="relative">
-                    <input 
-                        :type="show ? 'text' : 'password'" 
+                    <input
+                        :type="show ? 'text' : 'password'"
                         wire:model="password_confirmation"
                         class="w-full px-4 py-2 border rounded-md pr-10"
                     >
@@ -89,6 +89,21 @@
                 <option value="Repartidor">Repartidor</option>
             </select>
             @error('rol') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+        </div>
+
+        {{-- Avatar --}}
+        <div>
+            <label class="block text-gray-700">Avatar</label>
+            <input type="file" wire:model="avatar" accept="image/*" class="w-full px-4 py-2 border rounded-md">
+            @error('avatar') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+
+            <div class="mt-2">
+                @if ($avatar)
+                    <img src="{{ $avatar->temporaryUrl() }}" class="h-32 w-32 object-cover rounded-full">
+                @elseif ($usuario?->avatar)
+                    <img src="{{ asset($usuario->avatar) }}" class="h-32 w-32 object-cover rounded-full">
+                @endif
+            </div>
         </div>
 
         <div class="text-right">

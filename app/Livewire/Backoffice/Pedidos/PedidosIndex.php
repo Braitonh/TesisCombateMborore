@@ -6,6 +6,7 @@ use App\Events\OrderCreated;
 use App\Models\Cliente;
 use App\Models\Pedido;
 use App\Models\Producto;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -27,28 +28,33 @@ class PedidosIndex extends Component
     public $pedidoIdToDelete = null;
     public $showDeleteModal = false;
 
-    
+    public $repartidores;
+    public ?int $repartidor_id = null;
 
-    public Pedido $pedido;
+    public ?float $envio = 0;
+
+    public ?Pedido $pedido;
 
     public ?Cliente $cliente = null;
-    
+
     //Cliente
     public ?string $nombre = null;
     public ?string $email = null;
     public ?string $telefono = null;
     public ?string $direccion = null;
 
+
     public function mount()
     {
         $this->productosDisponibles = Producto::where('activo', true)->get();
+        $this->repartidores = User::where('rol', 'Repartidor')->get();
     }
 
     public function confirmDelete($id)
     {
         $this->pedidoIdToDelete = $id;
         $this->showDeleteModal = true;
-    }   
+    }
 
     public function delete()
     {
@@ -60,7 +66,7 @@ class PedidosIndex extends Component
 
         session()->flash('success', 'Pedido eliminado correctamente.');
     }
-    
+
     public function cancelDelete()
     {
         $this->showDeleteModal = false;
@@ -102,7 +108,7 @@ class PedidosIndex extends Component
     {
         unset($this->cantidades[$id]);
         unset($this->shoppingCart[$id]);
-        
+
         if(empty($this->cantidades) && empty($this->shoppingCart)){
             $this->toggleCartModal();
         }
@@ -113,7 +119,7 @@ class PedidosIndex extends Component
     {
         $this->resetPage();
     }
-    
+
     public function buscar()
     {
         $this->resetPage();
@@ -127,28 +133,34 @@ class PedidosIndex extends Component
     public function openModal(?int $id): void
     {
         sleep(0.5);
-        $pedido = Pedido::with('productos', 'cliente')->find($id);
-        
+        $pedido = Pedido::with('productos', 'cliente')->findOrFail($id);
+        $this->pedido = $pedido;
+
         $this->shoppingCart = [];
         $this->cantidades = [];
-    
+
         foreach ($pedido->productos as $producto) {
             $this->shoppingCart[$producto->id] = $producto;
             $this->cantidades[$producto->id] = $producto->pivot->cantidad;
         }
-    
+
         $this->cliente_id = $pedido->cliente_id;
         $this->cliente = $pedido->cliente;
-    
+
         if ($pedido->cliente) {
             $this->nombre = $pedido->cliente->nombre;
             $this->email = $pedido->cliente->email;
             $this->telefono = $pedido->cliente->telefono;
             $this->direccion = $pedido->cliente->direccion;
         }
-    
+
+        if ($pedido->repartidor_id){
+            $this->repartidor_id = $pedido->repartidor_id;
+            $this->envio = $pedido->total - $this->getTotalProperty();
+        }
+
+
         $this->showModal = !$this->showModal;
-        $this->pedido = $pedido;
         if (!$this->showModal) {
             $this->resetErrorBag();
         }
@@ -159,7 +171,7 @@ class PedidosIndex extends Component
         sleep(0.5);
         $this->showModal = !$this->showModal;
 
-        $this->reset(['shoppingCart', 'cantidades', 'nombre', 'email', 'telefono', 'direccion', 'cliente', 'cliente_id', 'pedido']);
+        $this->reset(['shoppingCart', 'cantidades', 'nombre', 'email', 'telefono', 'direccion', 'cliente', 'cliente_id', 'pedido','envio']);
         $this->resetErrorBag();
 
     }
@@ -176,14 +188,23 @@ class PedidosIndex extends Component
 
     public function getTotalProperty()
     {
-        return collect($this->shoppingCart)->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
+        $cartTotal = collect($this->shoppingCart)
+            ->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
+        return $cartTotal + ($this->envio ?? 0);
+    }
+
+    public function getSubTotalProperty()
+    {
+        $cartTotal = collect($this->shoppingCart)
+            ->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
+        return $cartTotal;
     }
 
     public function savePedido()
     {
 
         DB::beginTransaction();
-    
+
         try {
 
         // Eliminar productos anteriores del pedido (importante para editar)
@@ -201,11 +222,10 @@ class PedidosIndex extends Component
                 'subtotal' => $subtotal,
             ]);
         }
-
-        $total = collect($this->shoppingCart)->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
+        $total = $this->getTotalProperty();
         $this->pedido->update(['total' => $total,]);
         DB::commit();
-    
+
             // Generar PDF del ticket
         $this->pedido->load('cliente', 'productos');
         $pdf = Pdf::loadView('tickets.pedido', ['pedido' => $this->pedido]);
@@ -213,9 +233,9 @@ class PedidosIndex extends Component
         $pdf->save($pdfPath);
 
         session()->flash('ticket_path', asset("storage/tickets/pedido_{$this->pedido->id}.pdf"));
-        $this->reset(['shoppingCart', 'cantidades', 'showModal', 'nombre', 'email', 'telefono', 'direccion']);
+        $this->reset(['shoppingCart', 'cantidades', 'showModal', 'nombre', 'email', 'telefono', 'direccion', 'cliente', 'buscador', 'cliente_id', 'pedido', 'envio']);
         session()->flash('success', 'Pedido guardado exitosamente. Ticket generado.');
-        
+
         event(new OrderCreated($this->pedido->toArray()));
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -226,17 +246,17 @@ class PedidosIndex extends Component
             $this->addError('pedido', 'Error: ' . $e->getMessage());
         }
     }
-    
-    
+
+
     public function render()
     {
         $pedidos = Pedido::whereNull('deleted_at')
             ->when($this->buscador, fn($q) =>
                 $q->where('id', 'like', '%' . $this->buscador . '%')
             )
-            ->orderBy('id', 'desc') 
+            ->orderBy('id', 'desc')
             ->paginate(10);
-    
+
         return view('livewire.backoffice.pedidos.pedidos-index', compact('pedidos'));
     }
 }

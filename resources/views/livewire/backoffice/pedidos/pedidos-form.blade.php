@@ -66,7 +66,7 @@
 
                                     </div>
                                     <div class="text-right font-bold text-gray-700">
-         
+
                                         <div>${{ number_format($producto->precio * ($cantidades[$producto->id] ?? 1), 0, ',', '.') }}</div>
 
                                     </div>
@@ -81,8 +81,8 @@
                     <div class="bg-gray-50 border rounded-lg p-4 h-fit">
                         <h2 class="text-lg font-semibold mb-4">Datos del cliente</h2>
                         <div class="mb-4 display flex flex-direccion row space-x-2">
-                            <input 
-                                type="text" 
+                            <input
+                                type="text"
                                 wire:model.defer="buscador"
                                 placeholder="Buscar cliente..."
                                 class="w-1/2 sm:w-1/2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
@@ -101,26 +101,26 @@
                         @elseif ($clienteEncontrado === false)
                             <div class="mt-4 p-4 bg-red-100 text-red-800 rounded mb-4">❌ Cliente no encontrado</div>
                         @endif
-                        
+
                             <div >
                                 <div>
                                     <label class="block text-gray-700">Nombre</label>
                                     <input type="text" wire:model="nombre" class="w-full px-4 py-2 border rounded-md">
                                     @error('nombre') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                 </div>
-                        
+
                                 <div>
                                     <label class="block text-gray-700">Email</label>
                                     <input type="email" wire:model="email" class="w-full px-4 py-2 border rounded-md">
                                     @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                 </div>
-                        
+
                                 <div>
                                     <label class="block text-gray-700">Telefono</label>
                                     <input type="text" wire:model="telefono" class="w-full px-4 py-2 border rounded-md">
                                     @error('telefono') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                 </div>
-                        
+
                                 <div>
                                     <label class="block text-gray-700">Direccion</label>
                                     <input type="text" wire:model="direccion" class="w-full px-4 py-2 border rounded-md">
@@ -130,7 +130,7 @@
                     </div>
                     <div class="bg-gray-50 border rounded-lg p-4 h-fit">
                         <h2 class="text-lg font-semibold mb-4">Resumen de compra</h2>
-    
+
                         <hr class="my-2" />
 
                         <div class="mb-4">
@@ -143,14 +143,14 @@
                             </select>
                             @error('repartidor_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="mb-4">
                             <label for="envio" class="block text-gray-700 font-medium mb-1">Valor del envío</label>
                             <input
                                 type="number"
                                 id="envio"
                                 wire:model.live="envio"
-                                min="0"
+                                min="1"
                                 placeholder="0.00"
                                 class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 @disabled(!$repartidor_id)
@@ -158,6 +158,21 @@
                             @error('envio')
                               <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
+                        </div>
+
+
+                        <div class="flex justify-between semi-bold text-lg mb-4">
+                            <span>SubTotal</span>
+                            <span>
+                                <span>${{ number_format($this->subTotal, 0, ',', '.') }}</span>
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between semi-bold text-lg mb-4">
+                            <span>Envio</span>
+                            <span>
+                                <span>${{ number_format($this->envio, 0, ',', '.') }}</span>
+                            </span>
                         </div>
 
                         <div class="flex justify-between font-bold text-lg mb-4">
@@ -170,14 +185,14 @@
                                 {{ $message }}
                             </div>
                         @enderror
-    
+
                         <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">
                             Confirmar compra
                         </button>
-    
+
                     </div>
                 </form>
-                
+
                 <div class="col-span-1 row-start-3 col-start-3 flex justify-end">
                     <button wire:click="toggleCartModal" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
                         Cerrar
@@ -196,6 +211,8 @@
 
 
 </div>
+
+
 
 <script>
     window.addEventListener('hide-success-alert', () => {
