@@ -7,7 +7,7 @@
                     {{ session('success') }}
                 </div>
             @endif
-            @foreach($orderHistory as $order)
+            @forelse($orderHistory as $order)
                 <div class="grid grid-cols-1 md:grid-cols-6 gap-4 border rounded-lg p-4 items-center">
                     {{-- Col 1: ID + fecha --}}
                     <div>
@@ -68,12 +68,10 @@
                             </button>
                         @endif
                     </div>
-
-
-
-
                 </div>
-            @endforeach
+                @empty
+                    <p class="text-center text-gray-400">No hay pedidos</p>
+            @endforelse
         </div>
     </section>
 </div>

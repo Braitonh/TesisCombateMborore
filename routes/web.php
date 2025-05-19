@@ -9,6 +9,8 @@ use App\Livewire\Backoffice\Pedidos\PedidosForm;
 use App\Livewire\Backoffice\Pedidos\PedidosIndex;
 use App\Livewire\Backoffice\Product\ProductComponent;
 use App\Livewire\Backoffice\Product\ProductFormComponent;
+use App\Livewire\Backoffice\Productos\Combos;
+use App\Livewire\Backoffice\Productos\Formulario;
 use App\Livewire\Backoffice\Users\NotificacionsList;
 use App\Livewire\Backoffice\Users\UsersComponent;
 use App\Livewire\Backoffice\Users\UsersFormComponent;
@@ -39,6 +41,10 @@ Route::get('/store', function () {
           return view('store'); // esta vista va a tener el HTML completo
      })->name('store');
 
+Route::get('/tienda', function () {
+    return view('tienda'); // esta vista va a tener el HTML completo
+})->name('tienda');
+
 // Rutas protegidas por autenticación
 Route::middleware(['auth', 'check.admin'])->group(function () {
 
@@ -49,6 +55,10 @@ Route::middleware(['auth', 'check.admin'])->group(function () {
          ->name('productos.create');
     Route::get('/productos/{productoId}/edit', ProductFormComponent::class)
          ->name('productos.edit');
+    Route::get('/productos/combos', Combos::class)
+        ->name('productos.combos');
+    Route::get('/productos/combos/crear', Formulario::class)
+        ->name('productos.combos.crear');
 
     // Usuarios
     Route::get('/usuarios', UsersComponent::class)

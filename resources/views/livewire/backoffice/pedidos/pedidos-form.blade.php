@@ -1,4 +1,4 @@
-<div class="container mx-auto">
+<div class="container">
     <div class="flex justify-between items-center mb-6">
         <div class="flex">
             <a href="{{ route('pedidos.index') }}" class="flex items-center font-bold">

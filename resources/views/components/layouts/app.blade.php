@@ -47,6 +47,7 @@
                             name="Productos"
                             :subMenus="[
                                 ['id' => 'productos', 'route' => 'productos.index', 'name' => 'Lista de productos'],
+                                ['id' => 'combos', 'route' => 'productos.combos', 'name' => 'Crear combos'],
                             ]"
                             :extraPatterns="['productos.*']"
                         />

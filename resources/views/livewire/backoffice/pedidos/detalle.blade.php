@@ -8,7 +8,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-        @foreach ($pedidos as $pedido)
+        @forelse ($pedidos as $pedido)
         <div wire:poll.5s class="shadow-lg rounded-2xl p-6 border {{ $pedido->tiempo_estado }}">
             {{-- <div> --}}
             <div class="mb-4">
@@ -18,7 +18,7 @@
                     <p class="text-sm text-gray-600">Estado: {{ $pedido->estado }}</p>
                     <p class="text-sm text-gray-600">Total: ${{ number_format($pedido->total, 2) }}</p>
                 </div>
-    
+
                 <div>
                     <h4 class="text-md font-semibold text-gray-700 mb-2">Productos:</h4>
                     <div class="overflow-x-auto">
@@ -49,7 +49,7 @@
                                 @endforeach
                             </tbody>
                         </table>
- 
+
                     </div>
                 </div>
                 <div class="mt-2">
@@ -59,9 +59,11 @@
                     </button>
                 </div>
             </div>
-        @endforeach
+        @empty
+            <p class="text-gray-400">No hay pedidos</p>
+        @endforelse
     </div>
-    
+
 
     <div wire:loading wire:target="completarPedido" >
         <x-spinner />

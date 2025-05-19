@@ -29,4 +29,11 @@ class Producto extends Model
                     ->withPivot('cantidad', 'precio_unitario', 'subtotal') // Campos extras de la tabla pivote
                     ->withTimestamps(); // Maneja automáticamente created_at y updated_at de la pivote
     }
+
+    public function ofertas()
+    {
+        return $this->belongsToMany(Ofertas::class, 'oferta_producto', 'producto_id', 'oferta_id')
+            ->withPivot('cantidad')
+            ->withTimestamps();
+    }
 }
