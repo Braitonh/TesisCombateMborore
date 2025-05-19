@@ -41,6 +41,36 @@
         @endforeach
     </div>
 
+    <h2 class="text-xl font-bold mt-6 mb-2">Ofertas/Combos</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach ($ofertas as $oferta)
+        <div class="rounded-lg shadow-md bg-white overflow-hidden flex flex-col h-full">
+            <img src="{{ asset($oferta->imagen ?? 'https://source.unsplash.com/random/300x300') }}"
+                 alt="Imagen producto" class="object-cover w-full h-auto">
+
+            <div class="flex flex-col justify-between flex-1 p-4">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">{{ $oferta->nombre }}</h2>
+                    <p class="text-gray-600 mt-2">{{ $oferta->descripcion }}</p>
+                    <p class="text-gray-600 mt-2">${{ number_format($oferta->precio, 0, ',', '.') }}</p>
+                </div>
+                <div>
+                    @foreach ($oferta->productos as $producto)
+                        <p class="text-gray-600 mt-2">*{{ $producto->nombre }} - {{ $producto->pivot->cantidad }} unidades</p>
+                    @endforeach
+                </div>
+
+                <button
+                    wire:click="addToCard({{$oferta}})"
+                    type="button"
+                    class="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded">
+                    Agregar al carrito
+                </button>
+            </div>
+        </div>
+        @endforeach
+    </div>
+
     @if ($showModal && !empty($shoppingCart))
         <div class="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-start pt-10 overflow-y-auto">
             <div class="bg-white rounded-lg shadow-lg w-full max-w-6xl p-6 grid grid-cols-1 lg:grid-cols-3 gap-4">

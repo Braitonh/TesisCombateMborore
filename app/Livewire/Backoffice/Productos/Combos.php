@@ -9,6 +9,8 @@ class Combos extends Component
 {
 
     public $ofertas;
+    public $showDeleteModal = false;
+    public $ofertaAEliminar = null;
 
     public function mount()
     {
@@ -33,6 +35,32 @@ class Combos extends Component
         session()->flash('success', 'Oferta actualizada correctamente.');
 
 
+    }
+
+    public function confirmDelete($ofertaId)
+    {
+        $this->ofertaAEliminar = $ofertaId;
+        $this->showDeleteModal = true;
+    }
+
+    public function delete()
+    {
+        if ($this->ofertaAEliminar) {
+            $oferta = Ofertas::find($this->ofertaAEliminar);
+            if ($oferta) {
+                $oferta->delete();
+            }
+            $this->ofertaAEliminar = null;
+            $this->showDeleteModal = false;
+            $this->loadOfertas();
+            session()->flash('success', 'Oferta eliminada correctamente.');
+        }
+    }
+
+    public function cancelDelete()
+    {
+        $this->ofertaAEliminar = null;
+        $this->showDeleteModal = false;
     }
 
     public function render()

@@ -10,7 +10,7 @@ class Ofertas extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nombre', 'descripcion', 'precio_oferta', 'activo'
+        'nombre', 'descripcion', 'precio', 'activo', 'descuento'
     ];
 
     public function productos()

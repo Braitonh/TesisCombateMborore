@@ -8,6 +8,7 @@ use App\Models\Cliente;
 use App\Models\Pedido;
 use App\Models\Producto;
 use App\Models\User;
+use App\Models\Ofertas;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -104,16 +105,44 @@ class PedidosForm extends Component
                 'tipo'           => $this->envio > 0 ? 'Con envío' : 'Sin envío',
             ]);
 
-            foreach ($this->shoppingCart as $producto) {
-                $cantidad = $this->cantidades[$producto->id] ?? 1;
-                $precioUnitario = $producto->precio;
-                $subtotal = $precioUnitario * $cantidad;
+            // foreach ($this->shoppingCart as $producto) {
+            //     $cantidad = $this->cantidades[$producto->id] ?? 1;
+            //     $precioUnitario = $producto->precio;
+            //     $subtotal = $precioUnitario * $cantidad;
 
-                $pedido->productos()->attach($producto->id, [
-                    'cantidad' => $cantidad,
-                    'precio_unitario' => $precioUnitario,
-                    'subtotal' => $subtotal,
-                ]);
+            //     $pedido->productos()->attach($producto->id, [
+            //         'cantidad' => $cantidad,
+            //         'precio_unitario' => $precioUnitario,
+            //         'subtotal' => $subtotal,
+            //     ]);
+            // }
+
+            foreach ($this->shoppingCart as $key => $item) {
+                if (str_starts_with($key, 'oferta_')) {
+                    // Es una oferta, agregar todos sus productos
+                    foreach ($item->productos as $producto) {
+                        $cantidad = ($this->cantidades[$key] ?? 1) * ($producto->pivot->cantidad ?? 1);
+                        $precioUnitario = $producto->precio;
+                        $subtotal = $precioUnitario * $cantidad;
+
+                        $pedido->productos()->attach($producto->id, [
+                            'cantidad' => $cantidad,
+                            'precio_unitario' => $precioUnitario,
+                            'subtotal' => $subtotal,
+                        ]);
+                    }
+                } else {
+                    // Es un producto individual
+                    $cantidad = $this->cantidades[$key] ?? 1;
+                    $precioUnitario = $item->precio;
+                    $subtotal = $precioUnitario * $cantidad;
+
+                    $pedido->productos()->attach($item->id, [
+                        'cantidad' => $cantidad,
+                        'precio_unitario' => $precioUnitario,
+                        'subtotal' => $subtotal,
+                    ]);
+                }
             }
 
             DB::commit();
@@ -268,6 +297,24 @@ class PedidosForm extends Component
         $this->cliente_id = $id;
     }
 
+    public function addOfertaToCart($ofertaId)
+    {
+        $oferta = \App\Models\Ofertas::with('productos')->find($ofertaId);
+        if (!$oferta) return;
+
+        // Puedes usar un prefijo para diferenciar ofertas de productos en el carrito
+        $key = 'oferta_' . $oferta->id;
+
+        if (!isset($this->shoppingCart[$key])) {
+            $this->shoppingCart[$key] = $oferta;
+            $this->cantidades[$key] = 1;
+            $this->showSuccessAlert = true;
+            $this->dispatch('hide-success-alert');
+        } else {
+            $this->showSuccessAlert = false;
+        }
+    }
+
 
 
     public function render()
@@ -277,8 +324,11 @@ class PedidosForm extends Component
             ->orderBy('posicion')
             ->get();
 
+        $ofertas = Ofertas::where('activo', true)->get();
+
+
         // $clientes = Cliente::orderBy('nombre')->get();
 
-        return view('livewire.backoffice.pedidos.pedidos-form', compact('productos'));
+        return view('livewire.backoffice.pedidos.pedidos-form', compact('productos', 'ofertas'));
     }
 }

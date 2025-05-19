@@ -59,7 +59,8 @@ Route::middleware(['auth', 'check.admin'])->group(function () {
         ->name('productos.combos');
     Route::get('/productos/combos/crear', Formulario::class)
         ->name('productos.combos.crear');
-
+    Route::get('/productos/combos/{ofertaId}/edit', Formulario::class)
+        ->name('productos.combos.edit');
     // Usuarios
     Route::get('/usuarios', UsersComponent::class)
          ->name('usuarios.index');

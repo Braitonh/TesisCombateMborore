@@ -9,6 +9,7 @@
             {{ $oferta ? 'Editar Oferta' : 'Crear Oferta' }}
         </h1>
     </div>
+
     <form wire:submit="save" class="bg-white p-6 rounded shadow-md space-y-4">
         <div>
             <label class="block text-gray-700">Nombre</label>
@@ -20,22 +21,6 @@
             <label class="block text-gray-700">Descripción</label>
             <textarea wire:model="descripcion" rows="3" class="w-full px-4 py-2 border rounded-md"></textarea>
             @error('descripcion') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-        </div>
-
-        <div>
-            <label class="block text-gray-700">Precio</label>
-            <input type="number" wire:model="precio" step="0.01" class="w-full px-4 py-2 border rounded-md">
-            @error('precio') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-        </div>
-
-        <div>
-            <label class="block text-gray-700">Categoría</label>
-            <select wire:model="categoria" class="w-full px-4 py-2 border rounded-md">
-                <option value="pizzas">Pizzas</option>
-                <option value="bebidas">Bebidas</option>
-                <option value="hamburguesas">Hamburguesas</option>
-            </select>
-            @error('categoria') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
 
         <div>
@@ -53,50 +38,60 @@
             </div>
         </div>
 
+        <div>
+            <label class="block text-gray-700">Descuento (%)</label>
+            <input type="number" wire:model="descuento" step="0.01" min="0" max="100" class="w-full px-4 py-2 border rounded-md">
+            @error('descuento') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+        </div>
 
-{{--        <div>--}}
-{{--            <label class="flex items-center cursor-pointer">--}}
-{{--                <div class="relative">--}}
-{{--                    <input type="checkbox" wire:model="activo" class="sr-only peer">--}}
-{{--                    <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-orange-500 transition-colors"></div>--}}
-{{--                    <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md peer-checked:translate-x-full transition-transform"></div>--}}
-{{--                </div>--}}
-{{--                <span class="ml-3 text-gray-700">Activo</span>--}}
-{{--            </label>--}}
-{{--            @error('activo') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror--}}
-{{--        </div>--}}
 
-{{--        <div class="col-span-2 space-y-6 overflow-y-auto max-h-[70vh] pr-2">--}}
-{{--            @foreach ($shoppingCart as $producto)--}}
-{{--                <div class="border rounded-lg">--}}
-{{--                    <div class="p-4 space-y-4">--}}
-{{--                        <div class="flex items-center gap-4">--}}
-{{--                            <img src="{{ asset($producto->imagen) }}" class="w-20 h-20 object-cover rounded" />--}}
-{{--                            <div class="flex-1">--}}
-{{--                                <div class="font-medium">{{ $producto['nombre'] }}</div>--}}
-{{--                                <div class="flex items-center gap-2 mt-2">--}}
-{{--                                    <button wire:click="decrementar({{ $producto->id }})" class="px-2 py-1 bg-gray-200 rounded">-</button>--}}
-{{--                                    <div class="text-sm text-gray-500">Unidades {{ $cantidades[$producto->id] ?? 0 }}</div>--}}
-{{--                                    <button wire:click="incrementar({{ $producto->id }})" class="px-2 py-1 bg-gray-200 rounded">+</button>--}}
-{{--                                </div>--}}
-{{--                                <div>--}}
-{{--                                    <button wire:click="eliminar({{ $producto->id }})" class="mt-2 text-red-500 hover:text-red-700">--}}
-{{--                                        <i class=" fa-solid fa-trash"></i>--}}
-{{--                                    </button>--}}
-{{--                                    <span class="text-xs text-gray-500">Eliminar</span>--}}
-{{--                                </div>--}}
+        <div>
+            <label class="block text-gray-700">Agregar Producto</label>
+            <select wire:change="agregarProducto($event.target.value)" class="w-full px-4 py-2 border rounded-md">
+                <option value="">-- Seleccionar producto --</option>
+                @foreach ($productosDisponibles as $producto)
+                    @if (!isset($shoppingCart[$producto['id']]))
+                        <option value="{{ $producto['id'] }}">{{ $producto['nombre'] }} - ${{ number_format($producto['precio'], 0, ',', '.') }}</option>
+                    @endif
+                @endforeach
+            </select>
+        </div>
 
-{{--                            </div>--}}
-{{--                            <div class="text-right font-bold text-gray-700">--}}
+        <div class="col-span-2 space-y-6 overflow-y-auto max-h-[70vh] pr-2">
+            @foreach ($shoppingCart as $producto)
+                <div class="border rounded-lg">
+                    <div class="p-4 space-y-4">
+                        <div class="flex items-center gap-4">
+                            <img src="{{ asset($producto->imagen) }}" class="w-20 h-20 object-cover rounded" />
+                            <div class="flex-1">
+                                <div class="font-medium">{{ $producto['nombre'] }}</div>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <button type="button" wire:click="decrementar({{ $producto->id }})" class="px-2 py-1 bg-gray-200 rounded">-</button>
+                                    <div class="text-sm text-gray-500">Unidades {{ $cantidades[$producto->id] ?? 0 }}</div>
+                                    <button type="button" wire:click="incrementar({{ $producto->id }})" class="px-2 py-1 bg-gray-200 rounded">+</button>
+                                </div>
+                                <div>
+                                    <button type="button" wire:click="eliminar({{ $producto->id }})" class="mt-2 text-red-500 hover:text-red-700">
+                                        <i class=" fa-solid fa-trash"></i>
+                                    </button>
+                                    <span class="text-xs text-gray-500">Eliminar</span>
+                                </div>
 
-{{--                                <div>${{ number_format($producto->precio * ($cantidades[$producto->id] ?? 1), 0, ',', '.') }}</div>--}}
+                            </div>
+                            <div class="text-right font-bold text-gray-700">
 
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            @endforeach--}}
-{{--        </div>--}}
+                                <div>${{ number_format($producto->precio * ($cantidades[$producto->id] ?? 1), 0, ',', '.') }}</div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="text-right text-lg font-semibold text-gray-800">
+            Total con descuento: ${{ number_format($this->precioTotal, 0, ',', '.') }}
+        </div>
 
         <div class="text-right">
             <button type="submit" class="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600">
@@ -104,5 +99,8 @@
             </button>
         </div>
     </form>
+    <div wire:loading  >
+        <x-spinner />
+    </div>
 </div>
 
