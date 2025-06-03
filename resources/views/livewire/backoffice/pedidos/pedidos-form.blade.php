@@ -37,7 +37,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach ($productos as $producto)
-            @include('backoffice.pedidos.cardPedido', ['producto' => $producto])
+            @include('backoffice.pedidos.cardPedido', ['producto' => $producto, 'color' => 'orange'])
         @endforeach
     </div>
 
@@ -52,7 +52,7 @@
                 <div>
                     <h2 class="text-xl font-bold text-gray-800">{{ $oferta->nombre }}</h2>
                     <p class="text-gray-600 mt-2">{{ $oferta->descripcion }}</p>
-                    <p class="text-gray-600 mt-2">${{ number_format($oferta->precio, 0, ',', '.') }}</p>
+                    <p class="text-gray-600 mt-2">${{ number_format($oferta->precio, 2, ',', '.') }}</p>
                 </div>
                 <div>
                     @foreach ($oferta->productos as $producto)
@@ -61,7 +61,7 @@
                 </div>
 
                 <button
-                    wire:click="addToCard({{$oferta}})"
+                    wire:click="addOfertaToCart({{$oferta->id}})"
                     type="button"
                     class="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded">
                     Agregar al carrito
@@ -75,21 +75,21 @@
         <div class="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-start pt-10 overflow-y-auto">
             <div class="bg-white rounded-lg shadow-lg w-full max-w-6xl p-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div class="col-span-2 space-y-6 overflow-y-auto max-h-[70vh] pr-2">
-                    @foreach ($shoppingCart as $producto)
+                    @foreach ($shoppingCart as $key => $item)
                         <div class="border rounded-lg">
                             <div class="p-4 space-y-4">
                                 <div class="flex items-center gap-4">
-                                    <img src="{{ asset($producto->imagen) }}" class="w-20 h-20 object-cover rounded" />
+                                    <img src="{{ asset($item['imagen']) }}" class="w-20 h-20 object-cover rounded" />
                                     <div class="flex-1">
-                                        <div class="font-medium">{{ $producto['nombre'] }}</div>
+                                        <div class="font-medium">{{ $item['nombre'] }}</div>
                                         <div class="flex items-center gap-2 mt-2">
-                                            <button wire:click="decrementar({{ $producto->id }})" class="px-2 py-1 bg-gray-200 rounded">-</button>
-                                            <div class="text-sm text-gray-500">Unidades {{ $cantidades[$producto->id] ?? 0 }}</div>
-                                            <button wire:click="incrementar({{ $producto->id }})" class="px-2 py-1 bg-gray-200 rounded">+</button>
+                                            <button wire:click="decrementar('{{ $key }}')" class="px-2 py-1 bg-gray-200 rounded">-</button>
+                                            <div class="text-sm text-gray-500">Unidades {{ $cantidades[$key] ?? 0 }}</div>
+                                            <button wire:click="incrementar('{{ $key }}')" class="px-2 py-1 bg-gray-200 rounded">+</button>
                                         </div>
                                         <div>
-                                            <button wire:click="eliminar({{ $producto->id }})" class="mt-2 text-red-500 hover:text-red-700">
-                                                <i class=" fa-solid fa-trash"></i>
+                                            <button wire:click="eliminar('{{ $key }}')" class="mt-2 text-red-500 hover:text-red-700">
+                                                <i class="fa-solid fa-trash"></i>
                                             </button>
                                             <span class="text-xs text-gray-500">Eliminar</span>
                                         </div>
@@ -97,7 +97,7 @@
                                     </div>
                                     <div class="text-right font-bold text-gray-700">
 
-                                        <div>${{ number_format($producto->precio * ($cantidades[$producto->id] ?? 1), 0, ',', '.') }}</div>
+                                        <div>${{ number_format($item['precio'] * ($cantidades[$key] ?? 1), 0, ',', '.') }}</div>
 
                                     </div>
                                 </div>

@@ -15,20 +15,20 @@
                     </button>
                 </div>
             </div>
-            @foreach ($shoppingCart as $producto)
-                <div class="border rounded-lg">
+            @foreach ($shoppingCart as $key => $item)
+            <div class="border rounded-lg">
                     <div class="p-4 space-y-4">
                         <div class="flex items-center gap-4">
-                            <img src="{{ asset($producto->imagen) }}" class="w-20 h-20 object-cover rounded" />
+                            <img src="{{ asset($item['imagen']) }}" class="w-20 h-20 object-cover rounded" />
                             <div class="flex-1">
-                                <div class="font-medium">{{ $producto['nombre'] }}</div>
+                                <div class="font-medium">{{ $item['nombre'] }}</div>
                                 <div class="flex items-center gap-2 mt-2">
-                                    <button wire:click="decrementar({{ $producto->id }})" class="px-2 py-1 bg-gray-200 rounded">-</button>
-                                    <div class="text-sm text-gray-500">Unidades {{ $cantidades[$producto->id] ?? 0 }}</div>
-                                    <button wire:click="incrementar({{ $producto->id }})" class="px-2 py-1 bg-gray-200 rounded">+</button>
+                                    <button wire:click="decrementar('{{ $key }}')" class="px-2 py-1 bg-gray-200 rounded">-</button>
+                                    <div class="text-sm text-gray-500">Unidades {{ $cantidades[$key] ?? 0 }}</div>
+                                    <button wire:click="incrementar('{{ $key }}')" class="px-2 py-1 bg-gray-200 rounded">+</button>
                                 </div>
                                 <div>
-                                    <button wire:click="eliminar({{ $producto->id }})" class="mt-2 text-red-500 hover:text-red-700">
+                                    <button wire:click="eliminar('{{ $key }}')" class="mt-2 text-red-500 hover:text-red-700">
                                         <i class=" fa-solid fa-trash"></i>
                                     </button>
                                     <span class="text-xs text-gray-500">Eliminar</span>
@@ -37,7 +37,7 @@
                             </div>
                             <div class="text-right font-bold text-gray-700">
 
-                                <div>${{ number_format($producto->precio * ($cantidades[$producto->id] ?? 1), 0, ',', '.') }}</div>
+                                <div>${{ number_format($item['precio'] * ($cantidades[$key] ?? 1), 0, ',', '.') }}</div>
 
                             </div>
                         </div>
@@ -107,20 +107,20 @@
                 <div class="flex justify-between semi-bold text-lg mb-4">
                     <span>SubTotal</span>
                     <span>
-                        <span>${{ number_format($this->subTotal, 0, ',', '.') }}</span>
+                        <span>${{ number_format($this->subTotal, 2, ',', '.') }}</span>
                     </span>
                 </div>
 
                 <div class="flex justify-between semi-bold text-lg mb-4">
                     <span>Envio</span>
                     <span>
-                        <span>${{ number_format($this->envio, 0, ',', '.') }}</span>
+                        <span>${{ number_format($this->envio, 2, ',', '.') }}</span>
                     </span>
                 </div>
                 <div class="flex justify-between font-bold text-lg mb-4">
                     <span>Total</span>
                     <span>
-                        <span>${{ number_format($this->total, 0, ',', '.') }}</span>
+                        <span>${{ number_format($this->total, 2, ',', '.') }}</span>
                     </span>
                 </div>
 

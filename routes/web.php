@@ -16,6 +16,8 @@ use App\Livewire\Backoffice\Users\UsersComponent;
 use App\Livewire\Backoffice\Users\UsersFormComponent;
 use App\Livewire\GaleryFood;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,53 +47,81 @@ Route::get('/tienda', function () {
     return view('tienda'); // esta vista va a tener el HTML completo
 })->name('tienda');
 
+Route::get('/authClienteLogin', function () {
+    return view('authClienteLogin'); // esta vista va a tener el HTML completo
+})->name('authClienteLogin');
+
+Route::get('/authClienteRegister', function () {
+    return view('authClienteRegister'); // esta vista va a tener el HTML completo
+})->name('authClienteRegister');
+
+Route::post('/cliente/logout', function (Request $request) {
+    Auth::guard('cliente')->logout();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/authClienteLogin'); // o route('inicio') si tienes una ruta de bienvenida
+})->name('authClienteLogout');
+
+
+
 // Rutas protegidas por autenticación
-Route::middleware(['auth', 'check.admin'])->group(function () {
+Route::middleware(['auth'])->group(function () {
+    // Rutas para Admin
+    Route::middleware(['check.admin'])->group(function () {
+        // Productos
+        Route::get('/productos', ProductComponent::class)
+             ->name('productos.index');
+        Route::get('/productos/create', ProductFormComponent::class)
+             ->name('productos.create');
+        Route::get('/productos/{productoId}/edit', ProductFormComponent::class)
+             ->name('productos.edit');
+        Route::get('/productos/combos', Combos::class)
+            ->name('productos.combos');
+        Route::get('/productos/combos/crear', Formulario::class)
+            ->name('productos.combos.crear');
+        Route::get('/productos/combos/{ofertaId}/edit', Formulario::class)
+            ->name('productos.combos.edit');
+        // Usuarios
+        Route::get('/usuarios', UsersComponent::class)
+             ->name('usuarios.index');
+        Route::get('/usuarios/create', UsersFormComponent::class)
+             ->name('usuarios.create');
+        Route::get('/usuarios/{userId}/edit', UsersFormComponent::class)
+             ->name('usuarios.edit');
+        Route::get('/usuarios/notificaciones', NotificacionsList::class)
+             ->name('usuarios.notificaciones');
+        // Clientes
+        Route::get('/clientes', ClienteComponent::class)
+             ->name('clientes.index');
+        Route::get('/clientes/create', ClienteFormComponent::class)
+             ->name('clientes.create');
+        Route::get('/clientes/{clienteId}/edit', ClienteFormComponent::class)
+             ->name('clientes.edit');
+    });
 
-    // Productos
-    Route::get('/productos', ProductComponent::class)
-         ->name('productos.index');
-    Route::get('/productos/create', ProductFormComponent::class)
-         ->name('productos.create');
-    Route::get('/productos/{productoId}/edit', ProductFormComponent::class)
-         ->name('productos.edit');
-    Route::get('/productos/combos', Combos::class)
-        ->name('productos.combos');
-    Route::get('/productos/combos/crear', Formulario::class)
-        ->name('productos.combos.crear');
-    Route::get('/productos/combos/{ofertaId}/edit', Formulario::class)
-        ->name('productos.combos.edit');
-    // Usuarios
-    Route::get('/usuarios', UsersComponent::class)
-         ->name('usuarios.index');
-    Route::get('/usuarios/create', UsersFormComponent::class)
-         ->name('usuarios.create');
-    Route::get('/usuarios/{userId}/edit', UsersFormComponent::class)
-         ->name('usuarios.edit');
-     Route::get('/usuarios/notificaciones', NotificacionsList::class)
-          ->name('usuarios.notificaciones');
+    // Rutas para Cajero
+    Route::middleware(['check.cajero'])->group(function () {
+        Route::get('/pedidos', PedidosIndex::class)
+             ->name('pedidos.index');
+        Route::get('/pedidos/create', PedidosForm::class)
+             ->name('pedidos.create');
+        Route::get('/pedidos/estatus', PedidosEstatus::class)
+             ->name('pedidos.estatus');
+    });
 
-    // Clientes
-    Route::get('/clientes', ClienteComponent::class)
-         ->name('clientes.index');
-    Route::get('/clientes/create', ClienteFormComponent::class)
-         ->name('clientes.create');
-    Route::get('/clientes/{clienteId}/edit', ClienteFormComponent::class)
-         ->name('clientes.edit');
+    // Rutas para Cocinero
+    Route::middleware(['check.cocinero'])->group(function () {
+        Route::get('/pedidos/detalle', Detalle::class)
+             ->name('pedidos.detalle');
+    });
 
-    // Pedidos
-    Route::get('/pedidos', PedidosIndex::class)
-         ->name('pedidos.index');
-    Route::get('/pedidos/create', PedidosForm::class)
-         ->name('pedidos.create');
-    Route::get('/pedidos/detalle', Detalle::class)
-         ->name('pedidos.detalle');
-     Route::get('/pedidos/estatus', PedidosEstatus::class)
-          ->name('pedidos.estatus');
-//    // Delivery
-    Route::get('/delivery', \App\Livewire\Backoffice\Delivery\Delivery::class)
-        ->name('delivery.index');
-
+    // Rutas para Repartidor
+    Route::middleware(['check.repartidor'])->group(function () {
+        Route::get('/delivery', \App\Livewire\Backoffice\Delivery\Delivery::class)
+            ->name('delivery.index');
+    });
 });
 
 

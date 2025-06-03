@@ -2,7 +2,7 @@
     <div class="bg-white rounded-lg shadow-lg w-full max-w-6xl p-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         <div class="col-span-2 space-y-6 overflow-y-auto max-h-[70vh] pr-2">
-            @foreach ($shoppingCart as $producto)
+            @foreach ($shoppingCart as $key => $producto)
                 <div class="border rounded-lg">
                     <div class="p-4 space-y-4">
                         <div class="flex items-center gap-4">
@@ -10,12 +10,12 @@
                             <div class="flex-1">
                                 <div class="font-medium">{{ $producto['nombre'] }}</div>
                                 <div class="flex items-center gap-2 mt-2">
-                                    <button wire:click="decrementar({{ $producto->id }})" class="px-2 py-1 bg-gray-200 rounded">-</button>
-                                    <div class="text-sm text-gray-500">Unidades {{ $cantidades[$producto->id] ?? 0 }}</div>
-                                    <button wire:click="incrementar({{ $producto->id }})" class="px-2 py-1 bg-gray-200 rounded">+</button>
+                                    <button wire:click="decrementar('{{ $key }}')" class="px-2 py-1 bg-gray-200 rounded">-</button>
+                                    <div class="text-sm text-gray-500">Unidades {{ $cantidades[$key] ?? 0 }}</div>
+                                    <button wire:click="incrementar('{{ $key }}')" class="px-2 py-1 bg-gray-200 rounded">+</button>
                                 </div>
                                 <div>
-                                    <button wire:click="eliminar({{ $producto->id }})" class="mt-2 text-red-500 hover:text-red-700">
+                                    <button wire:click="eliminar('{{ $key }}')" class="mt-2 text-red-500 hover:text-red-700">
                                         <i class=" fa-solid fa-trash"></i>
                                     </button>
                                     <span class="text-xs text-gray-500">Eliminar</span>
@@ -23,8 +23,8 @@
 
                             </div>
                             <div class="text-right font-bold text-gray-700">
- 
-                                <div>${{ number_format($producto->precio * ($cantidades[$producto->id] ?? 1), 0, ',', '.') }}</div>
+
+                                <div>${{ number_format($producto->precio * ($cantidades[$key] ?? 1), 0, ',', '.') }}</div>
 
                             </div>
                         </div>
@@ -40,25 +40,25 @@
                     <div >
                         <div>
                             <label class="block text-gray-700">Nombre</label>
-                            <input type="text" wire:model="nombre" class="w-full px-4 py-2 border rounded-md">
+                            <input type="text" wire:model="nombre" class="w-full px-4 py-2 border rounded-md" @if($cliente) readonly @endif>
                             @error('nombre') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
-                
+
                         <div>
                             <label class="block text-gray-700">Email</label>
-                            <input  wire:model="email" class="w-full px-4 py-2 border rounded-md">
+                            <input wire:model="email" class="w-full px-4 py-2 border rounded-md" @if($cliente) readonly @endif>
                             @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
-                
+
                         <div>
                             <label class="block text-gray-700">Telefono</label>
-                            <input type="text" wire:model="telefono" class="w-full px-4 py-2 border rounded-md">
+                            <input type="text" wire:model="telefono" class="w-full px-4 py-2 border rounded-md" @if($cliente) readonly @endif>
                             @error('telefono') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
-                
+
                         <div>
                             <label class="block text-gray-700">Direccion</label>
-                            <input type="text" wire:model="direccion" class="w-full px-4 py-2 border rounded-md">
+                            <input type="text" wire:model="direccion" class="w-full px-4 py-2 border rounded-md" @if($cliente) readonly @endif>
                             @error('direccion') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
                     </div>
@@ -67,6 +67,8 @@
                 <h2 class="text-lg font-semibold mb-4">Resumen de compra</h2>
 
                 <hr class="my-2" />
+                <span class="text-sm text-gray-500">Precio de envio a confirmar</span>
+
 
                 <div class="flex justify-between font-bold text-lg mb-4">
                     <span>Total</span>
@@ -87,12 +89,12 @@
 
             </div>
         </form>
-        
+
         <div class="col-span-1 row-start-3 col-start-3 flex justify-end">
             <button wire:click="toggleCartModal" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
                 Cerrar
             </button>
-        </div> 
+        </div>
 
 
     </div>

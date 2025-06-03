@@ -15,7 +15,7 @@ class Pedido extends Model
 
     protected $fillable = [
         'cliente_id',
-        'repartidor_id', 
+        'repartidor_id',
         'fecha',
         'estado',
         'total',
@@ -26,7 +26,7 @@ class Pedido extends Model
     public function getTiempoEstadoAttribute()
     {
         $diffInSeconds = Carbon::parse($this->iniciado_en)->diffInSeconds(now());
-    
+
         if ($diffInSeconds < 10) {
             return 'bg-green-50 border-green-400';
         } elseif ($diffInSeconds < 20) {
@@ -70,5 +70,12 @@ class Pedido extends Model
     public function repartidor()
     {
         return $this->belongsTo(User::class, 'repartidor_id');
+    }
+
+    public function ofertas()
+    {
+        return $this->belongsToMany(\App\Models\Ofertas::class, 'oferta_pedido', 'pedido_id', 'oferta_id')
+            ->withPivot('cantidad', 'precio_oferta')
+            ->withTimestamps();
     }
 }

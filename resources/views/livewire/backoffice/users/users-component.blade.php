@@ -1,18 +1,18 @@
 <div class="container mx-auto">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Lista de usuarios</h1>
-        <a href="{{ route('usuarios.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md inline-flex items-center">
+        <a href="{{ route('usuarios.create') }}" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md inline-flex items-center">
             <i class="fas fa-plus mr-2"></i> Nuevo usuario
         </a>
     </div>
     <div class="mb-4">
-        <input 
-            type="text" 
+        <input
+            type="text"
             wire:model.defer="buscador"
             placeholder="Buscar usaurio..."
             class="w-1/2 sm:w-1/2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
         >
-        <button wire:click="buscar" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md inline-flex items-center">
+        <button wire:click="buscar" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md inline-flex items-center">
             <i class="fas fa-search mr-2"></i> Buscar
         </button>
         <button wire:click="limpiar" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md inline-flex items-center">
@@ -54,7 +54,7 @@
             </div>
         </div>
     </div>
-    
+
     @endif
     <div wire:loading.delay.shortest wire:target="delete" class="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
         <x-spinner />

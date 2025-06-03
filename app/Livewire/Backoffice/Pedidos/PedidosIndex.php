@@ -92,27 +92,22 @@ class PedidosIndex extends Component
         $this->productoSeleccionado = null; // limpiar selección
     }
 
-    public function incrementar($id)
+    public function incrementar($key)
     {
-        $this->cantidades[$id]++;
+        $this->cantidades[$key]++;
     }
 
-    public function decrementar($id)
+    public function decrementar($key)
     {
-        if ($this->cantidades[$id] > 1) {
-            $this->cantidades[$id]--;
+        if ($this->cantidades[$key] > 1) {
+            $this->cantidades[$key]--;
         }
     }
 
-    public function eliminar($id)
+    public function eliminar($key)
     {
-        unset($this->cantidades[$id]);
-        unset($this->shoppingCart[$id]);
-
-        if(empty($this->cantidades) && empty($this->shoppingCart)){
-            $this->toggleCartModal();
-        }
-
+        unset($this->cantidades[$key]);
+        unset($this->shoppingCart[$key]);
     }
 
     public function updatingBuscador()
@@ -133,15 +128,33 @@ class PedidosIndex extends Component
     public function openModal(?int $id): void
     {
         sleep(0.5);
-        $pedido = Pedido::with('productos', 'cliente')->findOrFail($id);
+        $pedido = Pedido::with(['productos', 'ofertas', 'cliente'])->findOrFail($id);
         $this->pedido = $pedido;
 
         $this->shoppingCart = [];
         $this->cantidades = [];
 
+        // 1. Cargar ofertas
+        foreach ($pedido->ofertas as $oferta) {
+            $key = 'oferta_' . $oferta->id;
+            $this->shoppingCart[$key] = $oferta;
+            $this->cantidades[$key] = $oferta->pivot->cantidad;
+        }
+
+        // 2. Cargar productos individuales (que NO están en ninguna oferta)
+        // Obtén los IDs de productos que ya están en ofertas
+        $productosEnOfertas = [];
+        foreach ($pedido->ofertas as $oferta) {
+            foreach ($oferta->productos as $producto) {
+                $productosEnOfertas[] = $producto->id;
+            }
+        }
+
         foreach ($pedido->productos as $producto) {
-            $this->shoppingCart[$producto->id] = $producto;
-            $this->cantidades[$producto->id] = $producto->pivot->cantidad;
+            if (!in_array($producto->id, $productosEnOfertas)) {
+                $this->shoppingCart[$producto->id] = $producto;
+                $this->cantidades[$producto->id] = $producto->pivot->cantidad;
+            }
         }
 
         $this->cliente_id = $pedido->cliente_id;
@@ -158,7 +171,6 @@ class PedidosIndex extends Component
             $this->repartidor_id = $pedido->repartidor_id;
             $this->envio = $pedido->total - $this->getTotalProperty();
         }
-
 
         $this->showModal = !$this->showModal;
         if (!$this->showModal) {
@@ -188,55 +200,89 @@ class PedidosIndex extends Component
 
     public function getTotalProperty()
     {
-        $cartTotal = collect($this->shoppingCart)
-            ->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
-        return $cartTotal + ($this->envio ?? 0);
+        $total = 0;
+        foreach ($this->shoppingCart as $key => $item) {
+            $cantidad = $this->cantidades[$key] ?? 1;
+            $total += $item->precio * $cantidad;
+        }
+        return $total + ($this->envio ?? 0);
     }
 
     public function getSubTotalProperty()
     {
-        $cartTotal = collect($this->shoppingCart)
-            ->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
-        return $cartTotal;
+        $total = 0;
+        foreach ($this->shoppingCart as $key => $item) {
+            $cantidad = $this->cantidades[$key] ?? 1;
+            $total += $item->precio * $cantidad;
+        }
+        return $total;
     }
 
     public function savePedido()
     {
-
         DB::beginTransaction();
 
         try {
+            // Eliminar relaciones anteriores
+            $this->pedido->productos()->detach();
+            $this->pedido->ofertas()->detach();
 
-        // Eliminar productos anteriores del pedido (importante para editar)
-        $this->pedido->productos()->detach();
+            foreach ($this->shoppingCart as $key => $item) {
+                $cantidad = $this->cantidades[$key] ?? 1;
 
-        // Agregar los productos actuales del carrito
-        foreach ($this->shoppingCart as $producto) {
-            $cantidad = $this->cantidades[$producto->id] ?? 1;
-            $precioUnitario = $producto->precio;
-            $subtotal = $precioUnitario * $cantidad;
+                if (str_starts_with($key, 'oferta_')) {
+                    // 1. Guardar la oferta en la tabla pivote
+                    $this->pedido->ofertas()->attach($item->id, [
+                        'cantidad' => $cantidad,
+                        'precio_oferta' => $item->precio,
+                    ]);
 
-            $this->pedido->productos()->attach($producto->id, [
-                'cantidad' => $cantidad,
-                'precio_unitario' => $precioUnitario,
-                'subtotal' => $subtotal,
+                    // 2. Guardar los productos de la oferta (con descuento si corresponde)
+                    $descuento = $item->descuento ?? 0;
+                    foreach ($item->productos as $producto) {
+                        $cantidadProducto = $cantidad * ($producto->pivot->cantidad ?? 1);
+                        $precioUnitario = $producto->precio * (1 - ($descuento / 100));
+                        $subtotal = $precioUnitario * $cantidadProducto;
+
+                        $this->pedido->productos()->attach($producto->id, [
+                            'cantidad' => $cantidadProducto,
+                            'precio_unitario' => $precioUnitario,
+                            'subtotal' => $subtotal,
+                        ]);
+                    }
+                } else {
+                    // Producto individual
+                    $precioUnitario = $item->precio;
+                    $subtotal = $precioUnitario * $cantidad;
+
+                    $this->pedido->productos()->attach($item->id, [
+                        'cantidad' => $cantidad,
+                        'precio_unitario' => $precioUnitario,
+                        'subtotal' => $subtotal,
+                    ]);
+                }
+            }
+
+            $total = $this->getTotalProperty();
+
+            $this->pedido->update([
+                'total' => $total,
+                'repartidor_id' => $this->repartidor_id,
+                'tipo' => $this->repartidor_id ? 'Con envío' : 'Sin envío'
             ]);
-        }
-        $total = $this->getTotalProperty();
-        $this->pedido->update(['total' => $total,]);
-        DB::commit();
+            DB::commit();
 
             // Generar PDF del ticket
-        $this->pedido->load('cliente', 'productos');
-        $pdf = Pdf::loadView('tickets.pedido', ['pedido' => $this->pedido]);
-        $pdfPath = storage_path("app/public/tickets/pedido_{$this->pedido->id}.pdf");
-        $pdf->save($pdfPath);
+            $this->pedido->load('cliente', 'productos');
+            $pdf = Pdf::loadView('tickets.pedido', ['pedido' => $this->pedido]);
+            $pdfPath = storage_path("app/public/tickets/pedido_{$this->pedido->id}.pdf");
+            $pdf->save($pdfPath);
 
-        session()->flash('ticket_path', asset("storage/tickets/pedido_{$this->pedido->id}.pdf"));
-        $this->reset(['shoppingCart', 'cantidades', 'showModal', 'nombre', 'email', 'telefono', 'direccion', 'cliente', 'buscador', 'cliente_id', 'pedido', 'envio']);
-        session()->flash('success', 'Pedido guardado exitosamente. Ticket generado.');
+            session()->flash('ticket_path', asset("storage/tickets/pedido_{$this->pedido->id}.pdf"));
+            $this->reset(['shoppingCart', 'cantidades', 'showModal', 'nombre', 'email', 'telefono', 'direccion', 'cliente', 'buscador', 'cliente_id', 'pedido', 'envio']);
+            session()->flash('success', 'Pedido guardado exitosamente. Ticket generado.');
 
-        event(new OrderCreated($this->pedido->toArray()));
+            event(new OrderCreated($this->pedido->toArray()));
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw $e;

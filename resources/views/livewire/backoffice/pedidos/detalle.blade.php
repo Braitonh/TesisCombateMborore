@@ -1,9 +1,9 @@
 <div class="container mx-auto">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Todos los Pedidos</h1>
-        <a href="{{ route('pedidos.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md inline-flex items-center">
+        {{-- <a href="{{ route('pedidos.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md inline-flex items-center">
             <i class="fas fa-plus mr-2"></i> Nuevo Pedido
-        </a>
+        </a> --}}
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -119,20 +119,28 @@ class PedidosForm extends Component
 
             foreach ($this->shoppingCart as $key => $item) {
                 if (str_starts_with($key, 'oferta_')) {
-                    // Es una oferta, agregar todos sus productos
+                    $cantidad = $this->cantidades[$key] ?? 1;
+                    // Guarda la oferta en la tabla pivote
+                    $pedido->ofertas()->attach($item->id, [
+                        'cantidad' => $cantidad,
+                        'precio_oferta' => $item->precio,
+                    ]);
+                    // Luego, agrega los productos de la oferta como ya lo haces
                     foreach ($item->productos as $producto) {
-                        $cantidad = ($this->cantidades[$key] ?? 1) * ($producto->pivot->cantidad ?? 1);
-                        $precioUnitario = $producto->precio;
-                        $subtotal = $precioUnitario * $cantidad;
+                        $cantidadProducto = $cantidad * ($producto->pivot->cantidad ?? 1);
+                        // Aplica el descuento de la oferta al precio del producto
+                        $descuento = $item->descuento ?? 0;
+                        $precioUnitario = $producto->precio * (1 - ($descuento / 100));
+                        $subtotal = $precioUnitario * $cantidadProducto;
 
                         $pedido->productos()->attach($producto->id, [
-                            'cantidad' => $cantidad,
+                            'cantidad' => $cantidadProducto,
                             'precio_unitario' => $precioUnitario,
                             'subtotal' => $subtotal,
                         ]);
                     }
                 } else {
-                    // Es un producto individual
+                    // Producto individual
                     $cantidad = $this->cantidades[$key] ?? 1;
                     $precioUnitario = $item->precio;
                     $subtotal = $precioUnitario * $cantidad;
@@ -250,17 +258,26 @@ class PedidosForm extends Component
 
     public function getTotalProperty()
     {
-        $cartTotal = collect($this->shoppingCart)
-            ->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
-
-        return $cartTotal + ($this->envio ?? 0);
+        return $this->subTotal + ($this->envio ?? 0);
     }
+
     public function getSubTotalProperty()
     {
-        return  collect($this->shoppingCart)
-            ->sum(fn($p) => $p->precio * $this->cantidades[$p->id]);
+        $total = 0;
 
+        foreach ($this->shoppingCart as $key => $item) {
+            $cantidad = $this->cantidades[$key] ?? 1;
 
+            if (str_starts_with($key, 'oferta_')) {
+                // Sumar solo el precio de la oferta por la cantidad
+                $total += $item->precio * $cantidad;
+            } else {
+                // Producto individual
+                $total += $item->precio * $cantidad;
+            }
+        }
+
+        return $total;
     }
 
     public function toggleCartModal(): void
@@ -282,7 +299,6 @@ class PedidosForm extends Component
         if(empty($this->cantidades) && empty($this->shoppingCart)){
             $this->toggleCartModal();
         }
-
     }
 
     #[On('alertHidden')] // Livewire 3 listener con atributo
@@ -301,7 +317,6 @@ class PedidosForm extends Component
     {
         $oferta = \App\Models\Ofertas::with('productos')->find($ofertaId);
         if (!$oferta) return;
-
         // Puedes usar un prefijo para diferenciar ofertas de productos en el carrito
         $key = 'oferta_' . $oferta->id;
 

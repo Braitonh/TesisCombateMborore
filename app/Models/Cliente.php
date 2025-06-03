@@ -11,7 +11,7 @@ class Cliente extends Model
     use HasFactory;
 
     use SoftDeletes;
-    
+
     protected $fillable = [
         'nombre',
         'email',
@@ -23,6 +23,12 @@ class Cliente extends Model
     public function pedidos()
     {
         return $this->hasMany(Pedido::class); // 1 cliente => N pedidos
+    }
+
+    // Relación: Cliente tiene una autenticación
+    public function auth()
+    {
+        return $this->hasOne(ClienteAuth::class);
     }
 
 }

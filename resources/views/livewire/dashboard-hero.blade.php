@@ -11,27 +11,49 @@
 
                 <!-- Links -->
                 <div class="flex items-center space-x-6">
-                    <a href="#inicio" class="text-gray-700 hover:text-orange-500 font-medium">Registrarse</a>
-                    <a href="#ofertas" class="text-gray-700 hover:text-orange-500 font-medium">Iniciar sesión</a>
+                    @guest('cliente')
+                    <a href="{{ route('authClienteRegister') }}" class="text-gray-700 hover:text-orange-500 font-medium">Registrarse</a>
+                    <a href="{{ route('authClienteLogin') }}" class="text-gray-700 hover:text-orange-500 font-medium">Iniciar sesión</a>
+                    @endguest
+
+                    {{-- @auth('cliente')
+                        <span class="text-gray-700 font-medium">{{ Auth::guard('cliente')->user()->email }}</span>
+                    @endauth --}}
+
                     <div class="relative bg-red-100 p-2 rounded-lg cursor-pointer" wire:click="toggleCartModal">
                         <i class="fa-solid fa-cart-shopping text-red-500 text-2xl animate-wiggle"></i>
-{{--                        <div class="px-1 py-0.5 bg-red-500 min-w-5 rounded-full text-center text-white text-xs absolute -top-2 -end-1 translate-x-1/4 text-nowrap">--}}
-{{--                            <div @class(['absolute top-0 start-0 rounded-full -z-10 bg-red-200 w-full h-full' , 'animate-ping' => count($shoppingCart) > 0])></div>--}}
-{{--                            {{count($shoppingCart)}}--}}
-{{--                        </div>--}}
+                       <div class="px-1 py-0.5 bg-red-500 min-w-5 rounded-full text-center text-white text-xs absolute -top-2 -end-1 translate-x-1/4 text-nowrap">
+                           <div @class(['absolute top-0 start-0 rounded-full -z-10 bg-red-200 w-full h-full' , 'animate-ping' => count($shoppingCart) > 0])></div>
+                           {{count($shoppingCart)}}
+                       </div>
                     </div>
-                </div>
 
-                <!-- Botón para móviles (si querés usar Alpine u otro JS para menú móvil) -->
-{{--                <div class="md:hidden">--}}
-{{--                    <button class="text-gray-700 focus:outline-none">--}}
-{{--                        <!-- Icono hamburguesa -->--}}
-{{--                        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"--}}
-{{--                             viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">--}}
-{{--                            <path d="M4 6h16M4 12h16M4 18h16"/>--}}
-{{--                        </svg>--}}
-{{--                    </button>--}}
-{{--                </div>--}}
+                    @auth('cliente')
+                    <!-- Menú hamburguesa SIEMPRE visible -->
+                    <div x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" class="flex items-center gap-2 text-gray-700 font-medium focus:outline-none">
+                            <i class="fa-solid fa-bars text-xl"></i>
+                        </button>
+
+                        <!-- Submenú desplegable -->
+                        <div
+                            x-show="open"
+                            @click.outside="open = false"
+                            x-transition
+                            class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+                        >
+                            <a  class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100">
+                                Editar perfil
+                            </a>
+                            <form method="POST" action="{{ route('authClienteLogout') }}">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-orange-100">
+                                    Cerrar sesión
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    @endauth
             </div>
         </div>
     </nav>
@@ -81,7 +103,7 @@
                     <h3 class="font-semibold text-2xl text-center">Combos Ofertas</h3>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+                {{-- <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
                     @foreach ($productosOfertas as $producto)
                         <div class="rounded-lg shadow-md bg-white overflow-hidden flex flex-col h-full w-48">
                             <img src="{{ asset($producto->imagen ?? 'https://source.unsplash.com/random/300x300') }}"
@@ -102,7 +124,31 @@
                             </div>
                         </div>
                     @endforeach
+                </div> --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+                    @foreach ($ofertas as $oferta)
+                    <div class="rounded-lg shadow-md bg-white overflow-hidden flex flex-col h-full">
+                        <img src="{{ asset($oferta->imagen ?? 'https://source.unsplash.com/random/300x300') }}"
+                             alt="Imagen producto" class="object-cover w-full h-auto">
+
+                        <div class="flex flex-col justify-between flex-1 p-4">
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800">{{ $oferta->nombre }}</h2>
+                                <p class="text-gray-600 mt-2">{{ $oferta->descripcion }}</p>
+                                <p class="text-gray-600 mt-2">${{ number_format($oferta->precio, 2, ',', '.') }}</p>
+                            </div>
+                            <button
+                                wire:click="addOfertaToCart({{$oferta->id}})"
+                                type="button"
+                                class="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded">
+                                Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                    @endforeach
                 </div>
+
+
             </div>
 
             <!-- Imagen derecha -->
@@ -172,5 +218,37 @@
             </div>
         </footer>
     </div>
+    @php
+        $cliente = Auth::guard('cliente')->user()?->cliente;
+    @endphp
+
+    @if ($showModal && !empty($shoppingCart))
+        @include('venta.modal', ['cliente' => $cliente])
+    @endif
+
+    @if ($showSuccessAlert)
+        <div
+            id="success-alert"
+            class="fixed top-4 right-4 bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded shadow-lg z-50 transition-all duration-300"
+        >
+            <strong class="font-semibold">¡Éxito!</strong> Producto agregado al carrito.
+        </div>
+    @endif
 
 </div>
+
+<script>
+    window.addEventListener('hide-success-alert', () => {
+        setTimeout(() => {
+            const alert = document.getElementById('success-alert');
+            if (alert) {
+                alert.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => {
+                    alert.style.visibility = 'hidden';
+                    window.Livewire.dispatch('alertHidden'); // Livewire 3 style
+
+                }, 100); // espera a que termine la animación CSS
+            }
+        }, 1000);
+    });
+</script>

@@ -19,4 +19,11 @@ class Ofertas extends Model
             ->withPivot('cantidad')
             ->withTimestamps();
     }
+
+    public function pedidos()
+    {
+        return $this->belongsToMany(\App\Models\Pedido::class, 'oferta_pedido', 'oferta_id', 'pedido_id')
+            ->withPivot('cantidad', 'precio_oferta')
+            ->withTimestamps();
+    }
 }

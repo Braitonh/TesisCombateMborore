@@ -40,7 +40,7 @@
                 @endphp
 
                 <ul class="list-none">
-                    @if ($rol !== 'user')
+                    @if ($rol === 'admin')
                         <x-menu-with-sub-menu
                             id="menu-productos"
                             icon="fa-solid fa-burger"
@@ -58,11 +58,10 @@
                             :subMenus="[
                                     ['id' => 'pedidos', 'route' => 'pedidos.index', 'name' => 'Lista de pedidos'],
                                     ['id' => 'crear', 'route' => 'pedidos.create', 'name' => 'Crear pedidos'],
-                                    ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Detalle de pedidos'],
+                                    ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Pedidos en cocina'],
                                     ['id' => 'estatus', 'route' => 'pedidos.estatus', 'name' => 'Estatus de pedidos'],
                                 ]"
                             :extraPatterns="['pedidos.*']"
-
                         />
                         <x-menu-with-sub-menu
                             id="menu-clientes"
@@ -79,7 +78,6 @@
                             :subMenus="[
                                     ['id' => 'usuarios', 'route' => 'usuarios.index', 'name' => 'Lista de usuarios'],
                                     ['id' => 'notificaciones', 'route' => 'usuarios.notificaciones', 'name' => 'Notificaciones'],
-
                                 ]"
                         />
                         <x-menu-with-sub-menu
@@ -90,21 +88,39 @@
                                     ['id' => 'delivery', 'route' => 'delivery.index', 'name' => 'Pedidos'],
                                 ]"
                             :extraPatterns="['delivery.*']"
-
                         />
-                    @endif
-                    @if ($rol !== 'admin')
+                    @elseif ($rol === 'cajero')
                         <x-menu-with-sub-menu
-                        id="menu-pedidos"
-                        icon="fa-solid fa-cart-shopping"
-                        name="Pedidos"
-                        :subMenus="[
-                                ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Detalle de pedidos'],
-                            ]"
+                            id="menu-pedidos"
+                            icon="fa-solid fa-cart-shopping"
+                            name="Pedidos"
+                            :subMenus="[
+                                    ['id' => 'pedidos', 'route' => 'pedidos.index', 'name' => 'Lista de pedidos'],
+                                    ['id' => 'crear', 'route' => 'pedidos.create', 'name' => 'Crear pedidos'],
+                                    ['id' => 'estatus', 'route' => 'pedidos.estatus', 'name' => 'Estatus de pedidos'],
+                                ]"
+                            :extraPatterns="['pedidos.*']"
+                        />
+                    @elseif ($rol === 'cocinero')
+                        <x-menu-with-sub-menu
+                            id="menu-pedidos"
+                            icon="fa-solid fa-cart-shopping"
+                            name="Pedidos"
+                            :subMenus="[
+                                    ['id' => 'detalle', 'route' => 'pedidos.detalle', 'name' => 'Pedidos en cocina'],
+                                ]"
+                        />
+                    @elseif ($rol === 'repartidor')
+                        <x-menu-with-sub-menu
+                            id="menu-delivery"
+                            icon="fa-solid fa-motorcycle"
+                            name="delivery"
+                            :subMenus="[
+                                    ['id' => 'delivery', 'route' => 'delivery.index', 'name' => 'Pedidos'],
+                                ]"
+                            :extraPatterns="['delivery.*']"
                         />
                     @endif
-
-
                 </ul>
             </nav>
             <div class="mt-auto">

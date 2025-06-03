@@ -30,7 +30,7 @@
                             <span class="font-light">Descripción </span>{{ $oferta->descripcion }}
                         </p>
                         <h2 class="text-xl font-bold text-gray-800">
-                            <span class="font-light">Precio </span> ${{ $oferta->precio }}
+                            <span class="font-light">Precio </span> ${{ number_format($oferta->precio, 2, ',', '.') }}
                         </h2>
                     </div>
 

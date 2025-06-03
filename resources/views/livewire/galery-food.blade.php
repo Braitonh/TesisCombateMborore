@@ -77,7 +77,7 @@
           >
               <strong class="font-semibold">¡Éxito!</strong> Producto agregado al carrito.
           </div>
-      @endif
+        @endif
 
       <div class="lg:col-span-1 flex flex-col gap-5">
         <!-- 1. Reseñas -->
